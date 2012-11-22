@@ -1,2 +1,3 @@
 db_login*
 include/DB*
+data/*.sql
