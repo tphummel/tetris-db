@@ -37,7 +37,7 @@ namespace :deploy do
 server {
         listen   80;
 
-        root /home/#{user}/#{application};
+        root /home/#{user}/#{application}/current;
         index index.php index.html index.htm;
 
         server_name #{sub_domain}.#{app_host};
@@ -50,11 +50,11 @@ server {
 
         error_page 500 502 503 504 /50x.html;
         location = /50x.html {
-              root /home/#{user}/#{application};
+              root /home/#{user}/#{application}/current;
         }
 
         # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-        location ~ \.php$ {
+        location ~ \\.php$ {
                 #fastcgi_pass 127.0.0.1:9000;
                 # With php5-fpm:
                 fastcgi_pass unix:/var/run/php5-fpm.sock;
