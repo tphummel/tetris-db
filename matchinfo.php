@@ -10,7 +10,7 @@
 
 <?php 
 
-require_once("db_login.php");
+require_once("config/db.php");
 include_once("header.php");
 require_once("points.inc.php");
 require_once("grade.php");

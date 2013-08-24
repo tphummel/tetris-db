@@ -12,7 +12,7 @@
 <?php
 
 require_once "header.php";
-require_once "db_login.php";
+require_once "config/db.php";
 //require_once("http://thenewtetris.freehostia.com/dblogin.php");
 		
 		//create connection obj
@@ -27,7 +27,8 @@ require_once "db_login.php";
         if (!$db_select)
         {
             die ("Could not select the database: <br />". mysql_error());
-        }
+        }
+
 		//get total matches
 		$query = "SELECT count(matchid) as totMatches FROM tntmatch";		
 		$result = mysql_query($query, $connection) or die(mysql_error());

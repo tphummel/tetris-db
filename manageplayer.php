@@ -20,7 +20,7 @@ include_once("header.php");
 ?>
 
 <?php
-include_once('db_login.php');
+include_once('config/db.php');
 //logs onto and chooses TNT DB
     
 $connection = mysql_connect($db_host, $db_username, $db_password);

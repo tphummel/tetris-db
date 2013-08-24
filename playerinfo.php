@@ -10,7 +10,7 @@
 
 <?php 
 
-require_once("db_login.php");
+require_once("config/db.php");
 
 $connection = mysql_connect($db_host, $db_username, $db_password);
 		if(!$connection)
