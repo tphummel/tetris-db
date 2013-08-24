@@ -1,4 +1,4 @@
-db_login*
+config/db.php
 include/DB*
 data/*.sql
 python-report/
