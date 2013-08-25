@@ -1,63 +1,62 @@
-/* CSS Document */
-
 body {
-font-family: arial, helvetica, sans-serif;
-font-size: 12px;
+  font-family: arial, helvetica, sans-serif;
+  font-size: 12px;
 }
 
 td.highlight {
-/* used with last match summary.  EFF >= 1 highlights table */
-background-color: ffff99;
+  background-color: #ffff99;
 }
 
 td.data {
-font-size: 11px;
-text-align: center;
+  font-size: 11px;
+  text-align: center;
 }
 
 td.colhead {
-font-size: 11px;
-width: 5%;
-background-color: cccccc;
-text-align: center;
+  font-size: 11px;
+  width: 5%;
+  background-color: #cccccc;
+  text-align: center;
 }
 
 td.tablehead {
-font-size: 14px;
-color: white;
-background-color: 3366ff;
-font-style: italic, bold;
-text-align: center;
+  font-size: 14px;
+  color: white;
+  background-color: #3366ff;
+  font-style: italic, bold;
+  text-align: center;
 }
 
 div.report {
-text-align: center;
+  text-align: center;
 }
 
 div.report table{
-text-align: center;
+  text-align: center;
 }
 
 select.errorLocation{
-background-color: #C00000;
-color: white;
+  background-color: #C00000;
+  color: white;
 }
 
 input.errorLocation{
-background-color: #C00000;
-color: white;
+  background-color: #C00000;
+  color: white;
 }
 td.errorLocation{
-background-color: #C00000;
+  background-color: #C00000;
 }
 
 div.errortext {
-        font-family: Arial, Helvetica, sans-serif; 
-        font-size: 14px; color:#C00000; font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif; 
+  font-size: 14px; 
+  color:#C00000; 
+  font-weight: bold;
 }
 
 img {
-border: 0px none;
+  border: 0px none;
 }
 
 a:visited{
