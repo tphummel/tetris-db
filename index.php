@@ -1,17 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title>The New Tetris</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script type="text/javascript" src="validate.js"></script>
-<link rel="stylesheet" type="text/css" href="style1.css" />
-<meta name="google-site-verification" content="oFAk3FgerJczGii4R1B4mdfSj3zT_-MF6YXd8RKz3xA" />
-</head>
-<body>
-
 <?php
+$title = "The New Tetris";
 
-require_once "header.php";
+require_once "templates/header.php";
 require_once "config/db.php";
 //require_once("http://thenewtetris.freehostia.com/dblogin.php");
 		
@@ -166,7 +156,7 @@ $version = file_get_contents("VERSION");
 </table>
 
 <?php
-require_once("footer.php");
+require_once("templates/footer.php");
 ?>
 
 
