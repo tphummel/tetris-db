@@ -1,18 +1,7 @@
-<html>
-<head>
-<title>Match Strength</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script type="text/javascript" src="validate.js"></script>
-<link rel="stylesheet" type="text/css" href="style1.css" />
-</head>
-
-<body>
-
 <?php
+$title = "Report : Match Strength";
 
-//left navbar / banner
-
-include_once("header.php");
+include_once("templates/header.php");
 require_once("config/db.php");
 require_once("lib/points.inc.php");
 require_once("lib/grade.php");
@@ -237,7 +226,7 @@ require_once("lib/statPower.php");
 	<!--close report div -->
 	</div>
 <?php
-include_once("footer.php");
+include_once("templates/footer.php");
 ?>
 </body>
 </html>
