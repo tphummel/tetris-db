@@ -1,19 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title>Match Console</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script type="text/javascript" src="validate.js"></script>
-<link rel="stylesheet" type="text/css" href="style1.css" />
-</head>
-
-<body>
-
 <?php
 
 //left navbar / banner
 
-include_once("header.php");
+$title = "The New Tetris - Match Console";
+
+require_once("templates/header.php");
+
 require_once("config/db.php");
 require_once("lib/grade.php");
 require_once("lib/points.inc.php");
@@ -842,7 +834,7 @@ where pm.matchid = m.matchid
 
 			
 	<?php
-	include_once("footer.php");
+	include_once("templates/footer.php");
 	?>
 	</body>
 	</html>
