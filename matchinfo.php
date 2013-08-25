@@ -13,7 +13,7 @@
 require_once("config/db.php");
 include_once("header.php");
 require_once("points.inc.php");
-require_once("grade.php");
+require_once("lib/grade.php");
 require_once("statPower.php");
 ini_set('display_errors', true);
 $connection = mysql_connect($db_host, $db_username, $db_password);

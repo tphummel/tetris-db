@@ -20,7 +20,7 @@
 include_once("header.php");
 require_once("config/db.php");
 require_once("points.inc.php");
-require_once("grade.php");
+require_once("lib/grade.php");
 require_once("statPower.php");
 
  
