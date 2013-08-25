@@ -1,48 +1,9 @@
-<html>
-<head>
-<title>summary report</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script type="text/javascript" src="validate.js"></script>
-<link rel="stylesheet" type="text/css" href="style1.css" />
-<script>
-function setMTD()
-{
-document.getElementById('start').setAttribute('value', '2008-11-01');
-document.getElementById('end').setAttribute('value', '2008-11-30');
-}
-
-function setYTD()
-{
-document.getElementById('start').setAttribute('value', '2010-01-01');
-document.getElementById('end').setAttribute('value', '2010-12-31');
-}
-
-function setAT()
-{
-document.getElementById('start').setAttribute('value', '2000-01-01');
-document.getElementById('end').setAttribute('value', '2020-12-31');
-}
-
-</script>
-
-</head>
-
-<body>
-
-
-
-
-
 <?php
+$title = "Reports : Summary";
 
 //left navbar / banner
-ini_set('display_errors', true); //debug only - show all error info
 
-
-
-
-
-require_once("header.php");
+require_once("templates/header.php");
 require_once("config/db.php");
 require_once("lib/points.inc.php");
 require_once("lib/statPower.php");
@@ -67,9 +28,6 @@ require_once("lib/statPower.php");
 <form action="rptSummary.php" method="get">
 	Start Date:<input type="text" name="sDate" id="start"><br>
 	End Date:<input type="text" name="eDate" id="end"><br>
-	<input type="button" value="MTD" onClick="setMTD();">
-	<input type="button" value="YTD" onClick="setYTD();">
-	<input type="button" value="All-Time" onClick="setAT();">
 	<br>
 	<input type="submit" value="submit">
 
@@ -161,7 +119,8 @@ group by pm.playerid";
 		$resultLines = mysql_query($queryL, $connection) or die(mysql_error());
 		
 		$epts = 0;
-		$wpts = 0;
+		$wpts = 0;
+
 			while ($rec = mysql_fetch_array($resultLines))
     		{
 				$i = $rec["pCt"];
@@ -308,7 +267,7 @@ group by pm.playerid";
 </div>
 <?php
 
-require_once("footer.php");
+require_once("templates/footer.php");
 ?>
 </body>
 </html>
