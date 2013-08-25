@@ -100,9 +100,11 @@ from tntmatch m
 where (select count(playerid) from playermatch where matchid = m.matchid) = 4";		
 		$result = mysql_query($query, $connection) or die(mysql_error());
 		$p4CtM = mysql_result($result, 0);
+
+$version = file_get_contents("VERSION");
 ?>
 
-<b>Welcome to TNT V0.2</b><br><br>
+<b>Welcome to TNT V<?php echo $version ?></b><br><br>
 
 <table border="0">
 <tr> 
