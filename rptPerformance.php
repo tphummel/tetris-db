@@ -3,7 +3,7 @@
 rptPerformance.php
 reports greatest/worst single game performances in a number of categories
 */
-
+$title = "Report : Performance" ;
 include_once("templates/header.php");
 require_once("config/db.php");
 require_once("lib/points.inc.php");
