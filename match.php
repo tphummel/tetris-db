@@ -18,7 +18,7 @@ require_once("config/db.php");
 require_once("lib/grade.php");
 require_once("lib/points.inc.php");
 require_once("lib/rankings.inc.php");
-require_once("statPower.php");
+require_once("lib/statPower.php");
 
  
 //create connection obj
@@ -692,7 +692,7 @@ function showConsole($users, $connection, $confirmStr, $errorMsg, $errorRegion, 
 			$effStr = number_format($eff,3);
 			$grade = gradePerf($time, $lines);
 			
-			//statPower.php
+			//lib/statPower.php
 			$power = computePower($wpts, $epts, $eff);
 			// already formatting value in computePower() - don't format again
 			//$pwrstr = number_format($power, 3);
@@ -815,7 +815,7 @@ where pm.matchid = m.matchid
 			$eptsg = number_format(($totgames > 0 ? $epts/$totgames : 0),3);
 			$wptsg = number_format(($totgames > 0 ? $wpts/$totgames : 0),3);
 			
-			//statPower.php
+			//lib/statPower.php
 			$dayPower = computePower($wptsg, $eptsg, $dayLps);
 			
 			?>

@@ -45,7 +45,7 @@ ini_set('display_errors', true); //debug only - show all error info
 require_once("header.php");
 require_once("config/db.php");
 require_once("lib/points.inc.php");
-require_once("statPower.php");
+require_once("lib/statPower.php");
 
 //create connection obj
 		$connection = mysql_connect($db_host, $db_username, $db_password);
