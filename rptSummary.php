@@ -22,12 +22,29 @@ require_once("lib/statPower.php");
             die ("Could not select the database: <br />". mysql_error());
         }
 
+
+		$startDate = NULL;
+		$endDate = NULL;
+		if (isset($_GET['sDate'],$_GET['eDate'])){
+			$sDate = $_GET['sDate'];
+			$sDate = new DateTime($sDate);
+			$startDate = date_format($sDate, 'Y-m-d');
+			
+			$eDate = $_GET['eDate'];
+			$eDate = new DateTime($eDate);
+			$endDate = date_format($eDate, 'Y-m-d');
+			
+		}else{
+			$startDate = '2000-01-01';
+			$endDate = '2020-12-31';
+		}
+
 ?>
 <div class="report">
 <h1>Summary Reports</h1>
 <form action="rptSummary.php" method="get">
-	Start Date:<input type="text" name="sDate" id="start"><br>
-	End Date:<input type="text" name="eDate" id="end"><br>
+	Start Date:<input type="text" name="sDate" id="start" value="<?php echo $startDate ?>"><br>
+	End Date:<input type="text" name="eDate" id="end" value="<?php echo $endDate ?>"><br>
 	<br>
 	<input type="submit" value="submit">
 
