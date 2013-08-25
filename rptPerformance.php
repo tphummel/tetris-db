@@ -1,27 +1,14 @@
-<html>
-<head>
-<title>Performance Report</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script type="text/javascript" src="validate.js"></script>
-<link rel="stylesheet" type="text/css" href="style1.css" />
-</head>
-
-<body>
-
 <?php
 /*
 rptPerformance.php
 reports greatest/worst single game performances in a number of categories
 */
 
-
-//left navbar / banner
-include_once("header.php");
+include_once("templates/header.php");
 require_once("config/db.php");
 require_once("lib/points.inc.php");
 require_once("lib/grade.php");
 require_once("lib/statPower.php");
-
  
 //create connection obj
 		$connection = mysql_connect($db_host, $db_username, $db_password);
@@ -571,7 +558,7 @@ while ($row = mysql_fetch_array($result))
 <?php
 } //end report body if -above this doesnt show unless $_GET["rptOption"] isset.
 
-include_once("footer.php");
+include_once("templates/footer.php");
 ?>
 </body>
 </html>
