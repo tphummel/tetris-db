@@ -1,12 +1,12 @@
 <?php 
-$title = "Reports : Player Day Summaries";
+$title = "Reports : Match Detail";
 include_once("templates/header.php");
 
 require_once("config/db.php");
 require_once("lib/points.inc.php");
 require_once("lib/grade.php");
 require_once("lib/statPower.php");
-ini_set('display_errors', true);
+
 $connection = mysql_connect($db_host, $db_username, $db_password);
 		if(!$connection)
         {
@@ -26,15 +26,19 @@ if (isset($_GET["matchid"]))
 	$match = $_GET["matchid"];
 }
 
-$select1 = "SELECT m.*, 
-(select count(playerid) from playermatch where matchid = m.matchid) as pCt FROM tntmatch m  where matchid=" . $match;
+$select1 = "
+	SELECT m.*, 
+	l.locationname, l.address, l.city, 
+	(select count(playerid) 
+		from playermatch where matchid = m.matchid) as pCt 
+	FROM tntmatch m, location l  
+	WHERE matchid=" . $match . 
+	" AND l.locationid = m.location";
 $result1 = mysql_query($select1, $connection) or die(mysql_error());
 $sumData = mysql_fetch_array($result1);
 $matchid = $sumData["matchid"];
 $matchdate = new DateTime($sumData["matchdate"]);
 $pCt = $sumData["pCt"];
-
-
 
 $select2 = "select pm.lines, pm.time, pm.wrank, pm.erank, p.username, pm.playerid, 
 (select count(playerid) from playermatch where matchid = pm.matchid) as pCt 
@@ -44,7 +48,7 @@ $result2 = mysql_query($select2, $connection) or die(mysql_error());
 
 ?>
 <div class="report">
-<?php echo "#" . $matchid . "<br>" . date_format($matchdate, 'm/d/Y'); ?>
+<?php echo "#" . $matchid . "<br />" . date_format($matchdate, 'm/d/Y') . "<br />" . $sumData["address"] . " - " . $sumData["city"]; ?>
 
 <table align="center">
 <tr>
