@@ -86,7 +86,7 @@ $rptPlyrs = array(
 
 foreach ($rptOptions as $i)
 {	
-	if ($i == $_GET["rptOption"])
+	if (isset($_GET["rptOption"]) && $i == $_GET["rptOption"])
 	{
 		echo '<option value="' . $i . '" selected>' . $i . '</option>';
 	}
@@ -106,7 +106,7 @@ foreach ($rptOptions as $i)
 
 foreach ($rptPlyrs as $n)
 {
-	if($n == $_GET["rptPlyrs"])
+	if(isset($_GET["rptPlyrs"]) && $n == $_GET["rptPlyrs"])
 	{
 		echo '<option values="' . $n . '" selected>' . $n . '</option>';
 	}
@@ -126,7 +126,7 @@ foreach ($rptPlyrs as $n)
 
 foreach ($rptNumRecs as $n)
 {
-	if($n == $_GET["rptNumRecs"])
+	if(isset($_GET["rptNumRecs"]) && $n == $_GET["rptNumRecs"])
 	{
 		echo '<option values="' . $n . '" selected>' . $n . '</option>';
 	}
