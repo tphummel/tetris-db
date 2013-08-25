@@ -1,14 +1,6 @@
-<html>
-<head>
-<title>Player Day Summaries</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script type="text/javascript" src="validate.js"></script>
-<link rel="stylesheet" type="text/css" href="style1.css" />
-</head>
-
-<body>
-
 <?php 
+$title  = "Reports : Player Day Summaries";
+include_once "templates/header.php" ;
 
 require_once("config/db.php");
 
@@ -89,14 +81,11 @@ while($row = mysql_fetch_array($result2))
 	
 }
 
-	
-	
-
-	
-
-
-
 ?>
 </table>
-</body>
-</html>
+</div>
+<?php
+
+	
+include_once "templates/footer.php";
+?>
