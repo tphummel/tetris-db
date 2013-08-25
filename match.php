@@ -17,7 +17,7 @@ include_once("header.php");
 require_once("config/db.php");
 require_once("lib/grade.php");
 require_once("lib/points.inc.php");
-require_once("rankings.inc.php");
+require_once("lib/rankings.inc.php");
 require_once("statPower.php");
 
  
@@ -339,7 +339,7 @@ switch ($_GET['action'])
 		}
 		
 		
-		//rankings.inc.php
+		//lib/rankings.inc.php
 		$wrankedPlayers = getWinRanks($players);
 		$erankedPlayers = getEffRanks($wrankedPlayers);
 		
