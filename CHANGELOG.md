@@ -1,3 +1,8 @@
+0.3.1 / 2013-08-25
+==================
+  - match console:
+    - changed stats to show trailing 24 hrs instead of current day
+
 0.3.0 / 2013-08-25
 ==================
   - reorganized project:
