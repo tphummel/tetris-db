@@ -710,6 +710,9 @@ function showConsole($users, $connection, $confirmStr, $errorMsg, $errorRegion, 
 ==========================================================================================
 */
 		$today = date("Y-m-d");
+
+		$now = date("Y-m-d H:i:s");
+		$oneDayAgo = date("Y-m-d H:i:s", strtotime($now) - 60 * 60 * 24) ;
 		?>
 		</tr>
 		
@@ -718,7 +721,7 @@ function showConsole($users, $connection, $confirmStr, $errorMsg, $errorRegion, 
 		<td align="center">
 			<table border="0">
 				<tr>
-					<th>Today</th>
+					<th>Last 24 Hrs</th>
 				</tr>
 				<tr>
 					<td>
@@ -746,14 +749,14 @@ function showConsole($users, $connection, $confirmStr, $errorMsg, $errorRegion, 
 		
 		<?php 
 		//query for day sum
-		
+
 		if (isset($users[$k][0]) && $users[$k][0] != "VACANT")
 		{
 			$query = 
 			"SELECT count(today.mid) as totgames, sum(today.time) as tottime, sum(today.score) as totlines
 			FROM (SELECT m.matchid as mid, p.username as name, pm.lines as score, pm.time as time
 					FROM playermatch pm, tntmatch m, player p
-					WHERE m.matchid = pm.matchid and pm.playerid = p.playerid and m.matchdate = '" . $today . "') today
+					WHERE m.matchid = pm.matchid and pm.playerid = p.playerid and m.inputstamp >= '" . $oneDayAgo . "') today
 			WHERE today.name = '" . $users[$k][0] . "'";
 			
 			$result = mysql_query($query, $connection) or die(mysql_error());
