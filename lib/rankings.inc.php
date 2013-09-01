@@ -229,21 +229,23 @@ function getEffRanks($wrankedPlayers){
 		
 		$lpsArr = array_merge($lpsArr);
 		
-		$e2 = max($lpsArr);
-		//remove all lps' that match max, may be >1 in event of tie.
-		for($i = 0; $i <= count($lpsArr); $i++)
-		{
-			if($lpsArr[$i] == $e2)
+		if ( count ( $lpsArr ) > 0) {
+			$e2 = max($lpsArr);
+			//remove all lps' that match max, may be >1 in event of tie.
+			for($i = 0; $i <= count($lpsArr); $i++)
 			{
-				unset($lpsArr[$i]);
+				if($lpsArr[$i] == $e2)
+				{
+					unset($lpsArr[$i]);
+				}
 			}
-		}
-		//if player's lps matches max, put in second place array
-		foreach($wrankedPlayers as $p)
-		{
-			if($e2 == $p[6])
+			//if player's lps matches max, put in second place array
+			foreach($wrankedPlayers as $p)
 			{
-				$erank2[] = $p;
+				if($e2 == $p[6])
+				{
+					$erank2[] = $p;
+				}
 			}
 		}
 		
