@@ -1,7 +1,6 @@
 <?php
-$dir = dirname ( __FILE__ ) ;
 use Assert\Assertion ;
-require $dir . "/../../lib/grade.php" ;
+require dirname ( __FILE__ )  . "/../../lib/grade.php" ;
 
 
 # gradePerf ( $time, $lines )
