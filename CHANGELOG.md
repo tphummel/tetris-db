@@ -1,3 +1,10 @@
+0.4.0 / 2013-09-01
+==================
+  - lib/rankings: 
+    - wrapped eff 2nd place in if count > 0 to fix warning
+  - rolled a unit test harness
+  - wrote tests for lib/grade, lib/rankings
+
 0.3.1 / 2013-08-25
 ==================
   - match console:
