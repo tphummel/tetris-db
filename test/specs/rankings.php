@@ -3,6 +3,7 @@ use Assert\Assertion ;
 require dirname ( __FILE__ ) . "/../../lib/rankings.inc.php" ;
 
 /* 
+wrank product
 Array ( [0] => JD [1] => 50 [2] => 1 [3] => 0 [4] => 60 [5] => on [6] => 0.83333333333333 ) 
 0: string
 1: string
@@ -11,148 +12,146 @@ Array ( [0] => JD [1] => 50 [2] => 1 [3] => 0 [4] => 60 [5] => on [6] => 0.83333
 4: integer
 5: string
 6: double
+
+erank product = wrank product + [7] = erank (integer)
 */ 
 
-$tests = array (
+$wrank = array (
   # two player
   function () {
-    $players = array ( 
+    $fixture = array ( 
       array ( "JD", "50", "1", 0, 60, "on", (50/60) ) ,
       array ( "Tom", "35", "1", 0, 60, null, (35/60) )
     ) ;
 
-    $results = getWinRanks ( $players ) ;
-    
-    $player1 = $results [ 0 ] ;
-    $player2 = $results [ 1 ] ;
+    $expected = array (
+      array ( "name" => "JD", "wrank" => 1 ),
+      array ( "name" => "Tom", "wrank" => 2 ),
+    ) ; 
 
-    Assertion::same ( $player1 [ 0 ], "JD" ) ;
-    Assertion::same ( $player1 [ 5 ], 1 ) ;
-    Assertion::same ( $player2 [ 0 ], "Tom" ) ;
-    Assertion::same ( $player2 [ 5 ], 2 ) ;
+    $results = getWinRanks ( $fixture ) ;
+
+    foreach ($results as $i => $player) {
+      Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
+      Assertion::same ( $player [ 5 ] , $expected [ $i ][ "wrank" ] ) ;
+    }
 
   },
-  
+
   # three player
   function () {
-    $players = array ( 
+    $fixture = array ( 
       array ( "JD", "50", "1", 0, 60, "on", (50/60) ) ,
       array ( "Tom", "35", "1", 0, 60, null, (35/60) ),
       array ( "Dan", "15", "0", 45, 45, null, (15/45) )
     ) ;
 
-    $results = getWinRanks ( $players ) ;
-    
-    $player1 = $results [ 0 ] ;
-    $player2 = $results [ 1 ] ;
-    $player3 = $results [ 2 ] ;
+    $expected = array (
+      array ( "name" => "JD", "wrank" => 1 ),
+      array ( "name" => "Tom", "wrank" => 2 ),
+      array ( "name" => "Dan", "wrank" => 3 ),
+    ) ; 
 
-    Assertion::same ( $player1 [ 0 ], "JD" ) ;
-    Assertion::same ( $player1 [ 5 ], 1 ) ;
-    Assertion::same ( $player2 [ 0 ], "Tom" ) ;
-    Assertion::same ( $player2 [ 5 ], 2 ) ;
-    Assertion::same ( $player3 [ 0 ], "Dan" ) ;
-    Assertion::same ( $player3 [ 5 ], 3 ) ;
+    $results = getWinRanks ( $fixture ) ;
+    
+    foreach ($results as $i => $player) {
+      Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
+      Assertion::same ( $player [ 5 ] , $expected [ $i ][ "wrank" ] ) ;
+    }
   },
 
   # three player w/ tie
   function () {
-    $players = array ( 
+    $fixture = array ( 
       array ( "JD", "50", "1", 0, 60, "on", (50/60) ) ,
       array ( "Tom", "35", "1", 0, 60, null, (35/60) ),
       array ( "Dan", "15", "1", 0, 60, null, (15/60) )
     ) ;
 
-    $results = getWinRanks ( $players ) ;
-    
-    $player1 = $results [ 0 ] ;
-    $player2 = $results [ 1 ] ;
-    $player3 = $results [ 2 ] ;
+    $expected = array (
+      array ( "name" => "JD", "wrank" => 1 ),
+      array ( "name" => "Tom", "wrank" => 2 ),
+      array ( "name" => "Dan", "wrank" => 2 ),
+    ) ; 
 
-    Assertion::same ( $player1 [ 0 ], "JD" ) ;
-    Assertion::same ( $player1 [ 5 ], 1 ) ;
-    Assertion::same ( $player2 [ 0 ], "Tom" ) ;
-    Assertion::same ( $player2 [ 5 ], 2 ) ;
-    Assertion::same ( $player3 [ 0 ], "Dan" ) ;
-    Assertion::same ( $player3 [ 5 ], 2 ) ;
+    $results = getWinRanks ( $fixture ) ;
+    
+    foreach ($results as $i => $player) {
+      Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
+      Assertion::same ( $player [ 5 ] , $expected [ $i ][ "wrank" ] ) ;
+    }
   },
 
   # four player
   function () {
-    $players = array ( 
+    $fixture = array ( 
       array ( "JD", "50", "1", 0, 60, "on", (50/60) ) ,
       array ( "Tom", "35", "1", 0, 60, null, (35/60) ),
       array ( "Dan", "15", "0", 45, 45, null, (15/45) ),
       array ( "Jeran", "10", "0", 30, 30, null, (10/30) ),
     ) ;
 
-    $results = getWinRanks ( $players ) ;
-    
-    $player1 = $results [ 0 ] ;
-    $player2 = $results [ 1 ] ;
-    $player3 = $results [ 2 ] ;
-    $player4 = $results [ 3 ] ;
+    $expected = array (
+      array ( "name" => "JD", "wrank" => 1 ),
+      array ( "name" => "Tom", "wrank" => 2 ),
+      array ( "name" => "Dan", "wrank" => 3 ),
+      array ( "name" => "Jeran", "wrank" => 4 ),
+    ) ; 
 
-    Assertion::same ( $player1 [ 0 ], "JD" ) ;
-    Assertion::same ( $player1 [ 5 ], 1 ) ;
-    Assertion::same ( $player2 [ 0 ], "Tom" ) ;
-    Assertion::same ( $player2 [ 5 ], 2 ) ;
-    Assertion::same ( $player3 [ 0 ], "Dan" ) ;
-    Assertion::same ( $player3 [ 5 ], 3 ) ;
-    Assertion::same ( $player4 [ 0 ], "Jeran" ) ;
-    Assertion::same ( $player4 [ 5 ], 4 ) ;
+    $results = getWinRanks ( $fixture ) ;
+    
+    foreach ($results as $i => $player) {
+      Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
+      Assertion::same ( $player [ 5 ] , $expected [ $i ][ "wrank" ] ) ;
+    }
   },
 
   # four player. two-way tie for third
   function () {
-    $players = array ( 
+    $fixture = array ( 
       array ( "JD", "50", "1", 0, 60, "on", (50/60) ) ,
       array ( "Tom", "35", "1", 0, 60, null, (35/60) ),
       array ( "Dan", "15", "0", 45, 45, null, (15/45) ),
       array ( "Jeran", "10", "0", 45, 45, null, (10/45) ),
     ) ;
 
-    $results = getWinRanks ( $players ) ;
-    
-    $player1 = $results [ 0 ] ;
-    $player2 = $results [ 1 ] ;
-    $player3 = $results [ 2 ] ;
-    $player4 = $results [ 3 ] ;
+    $expected = array (
+      array ( "name" => "JD", "wrank" => 1 ),
+      array ( "name" => "Tom", "wrank" => 2 ),
+      array ( "name" => "Dan", "wrank" => 3 ),
+      array ( "name" => "Jeran", "wrank" => 3 ),
+    ) ; 
 
-    Assertion::same ( $player1 [ 0 ], "JD" ) ;
-    Assertion::same ( $player1 [ 5 ], 1 ) ;
-    Assertion::same ( $player2 [ 0 ], "Tom" ) ;
-    Assertion::same ( $player2 [ 5 ], 2 ) ;
-    Assertion::same ( $player3 [ 0 ], "Dan" ) ;
-    Assertion::same ( $player3 [ 5 ], 3 ) ;
-    Assertion::same ( $player4 [ 0 ], "Jeran" ) ;
-    Assertion::same ( $player4 [ 5 ], 3 ) ;
+    $results = getWinRanks ( $fixture ) ;
+    
+    foreach ($results as $i => $player) {
+      Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
+      Assertion::same ( $player [ 5 ] , $expected [ $i ][ "wrank" ] ) ;
+    }
   },
 
   # four player. three-way tie for second
   function () {
-    $players = array ( 
+    $fixture = array ( 
       array ( "JD", "50", "1", 0, 60, "on", (50/60) ) ,
       array ( "Tom", "35", "1", 0, 60, null, (35/60) ),
       array ( "Dan", "15", "1", 0, 60, null, (15/60) ),
       array ( "Jeran", "10", "1", 0, 60, null, (10/60) ),
     ) ;
 
-    $results = getWinRanks ( $players ) ;
-    
-    $player1 = $results [ 0 ] ;
-    $player2 = $results [ 1 ] ;
-    $player3 = $results [ 2 ] ;
-    $player4 = $results [ 3 ] ;
+    $expected = array (
+      array ( "name" => "JD", "wrank" => 1 ),
+      array ( "name" => "Tom", "wrank" => 2 ),
+      array ( "name" => "Dan", "wrank" => 2 ),
+      array ( "name" => "Jeran", "wrank" => 2 ),
+    ) ; 
 
-    Assertion::same ( $player1 [ 0 ], "JD" ) ;
-    Assertion::same ( $player1 [ 5 ], 1 ) ;
-    Assertion::same ( $player2 [ 0 ], "Tom" ) ;
-    Assertion::same ( $player2 [ 5 ], 2 ) ;
-    Assertion::same ( $player3 [ 0 ], "Dan" ) ;
-    Assertion::same ( $player3 [ 5 ], 2 ) ;
-    Assertion::same ( $player4 [ 0 ], "Jeran" ) ;
-    Assertion::same ( $player4 [ 5 ], 2 ) ;
+    $results = getWinRanks ( $fixture ) ;
+    
+    foreach ($results as $i => $player) {
+      Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
+      Assertion::same ( $player [ 5 ] , $expected [ $i ][ "wrank" ] ) ;
+    }
   }
 ) ;
 
