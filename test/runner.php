@@ -26,7 +26,7 @@ foreach ($specFiles as $file) {
     try {
       $test ( ) ;
       $passCount++ ;
-    }catch(Assert\InvalidArgumentException $e) {
+    }catch(Assert\AssertionFailedException $e) {
       array_push ( $errors, $e ) ;
     }
 
