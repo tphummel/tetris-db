@@ -28,7 +28,7 @@ foreach ($specFiles as $file) {
       $test ( ) ;
       $passCount++ ;
     }catch(Assert\AssertionFailedException $e) {
-      array_push ( $errors, $e ) ;
+      array_push ( $errors, $e->getTrace() ) ;
     }
 
   }
@@ -41,7 +41,14 @@ echo "<div>pass: $passCount</div>" ;
 $failCount = count ( $errors ) ;
 echo "<div>fail: $failCount </div>" ;
 foreach ($errors as $error) {
-  echo "<div>$error</div>" ;
+  
+  $errFile = $error[1]["file"] ;
+  $errLine = $error[1]["line"] ;
+  $args = $error[1]["args"] ;
+  $fn = $error[1]["function"] ; 
+  $errText = $errFile . " : " . $errLine . " : " . $fn . " : (" . implode ( $args, ", " ) . ")";
+  
+  echo "<div>$errText</div>" ;
 }
 
 
