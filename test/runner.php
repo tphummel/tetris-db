@@ -8,7 +8,8 @@ ini_set('display_errors', 1);
 
 $specFiles = array (
   "control",
-  "grade"
+  "grade",
+  "rankings"
 ) ;
 
 $passCount = 0 ;
