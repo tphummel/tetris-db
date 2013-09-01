@@ -8,19 +8,19 @@ require dirname ( __FILE__ )  . "/../../lib/grade.php" ;
 $tests = array (
   function () {
     $gradeScore = gradePerf ( 100 , 100 ) ;
-    Assertion::eq ( $gradeScore, "1S-" ) ;
+    Assertion::same ( $gradeScore, "1S-" ) ;
   },
   function () {
     $gradeScore = gradePerf ( 100 , 1 ) ;
-    Assertion::eq ( $gradeScore, "F" ) ;
+    Assertion::same ( $gradeScore, "F" ) ;
   },
   function () {
     $gradeScore = gradePerf ( 0 , 1 ) ;
-    Assertion::eq ( $gradeScore, "F" ) ;
+    Assertion::same ( $gradeScore, "F" ) ;
   },
   function () {
     $gradeScore = gradePerf ( 20 , 60 ) ;
-    Assertion::eq ( $gradeScore, "XS" ) ;
+    Assertion::same ( $gradeScore, "XS" ) ;
   }
 ) ;
 
