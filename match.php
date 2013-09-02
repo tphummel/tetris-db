@@ -33,62 +33,20 @@ assemble two arrays:
 -players array of match data
 -ogPlayers array which contains usernames in the original order
 */
+	require_once dirname ( __FILE__ )  . "/lib/helper.php" ;
+
 	if(array_key_exists('player1',$_POST)){
 		unset($players);
-		unset($ogPlayers);
-		$ogPlayers = array();
-		for ($t = 1; $t <= 4; $t++)
-		{
-			//initially holds post array
-			$pTemp = $_POST["player" . $t];
-			//holds trimmed values from post array
-			$trimmedVals = array();
-			
-			//clean up post array values
-			foreach($pTemp as $val)
-			{
-				$trimmedVals[] = trim($val);
-			}
-			
-			if ($trimmedVals != NULL && $trimmedVals[0] != "VACANT")
-			{
-				//lines
-				if($trimmedVals[1] == "")
-				{
-					
-					$trimmedVals[1] = 0;
-				}
-				//min
-				if($trimmedVals[2] == "")
-				{
-					$trimmedVals[2] = 0;
-				}
-				//sec
-				if($trimmedVals[3] == "")
-				{
-					$trimmedVals[3] = 0;
-				}
-				if(array_key_exists(4, $trimmedVals)){
-					$pWin = $trimmedVals[4]; //save win
-				}else{
-					$pWin = "";
-				}
-				$trimmedVals[4] = ($trimmedVals[2]*60) + $trimmedVals[3]; //set time to slot 4
-				$trimmedVals[5] = $pWin; //set win to slot 5
-				
-				//lps
-				if($trimmedVals[4] > 0) //if time above 0, divide else return 0
-				{
-					$trimmedVals[6] = $trimmedVals[1] / $trimmedVals[4]; //set lps to slot 6
-				}
-				else
-				{
-					$trimmedVals[6] = 0;
-				}
-				$players[] = $trimmedVals;
-				$ogPlayers[] = $trimmedVals[0];  //array of original name order for maintaining player order after sorting.
-			}
+		$players = Helper::cleanPlayers ( $_POST ) ;
+
+		unset ( $ogPlayers ) ;
+		$ogPlayers = array ( ) ;
+		foreach ( $players as $player ) {
+			$ogPlayers[] = $player [ 0 ] ;
 		}
+
+		$location = $_POST["location"];
+		$note = $_POST["note"];
 			
 		/*
 		0 - user
@@ -101,11 +59,9 @@ assemble two arrays:
 		7- erank
 		*/
 			
-		
-		$location = $_POST["location"];
-		$note = $_POST["note"];
 	}
 $confirmStr = '';
+
 if(array_key_exists('action', $_GET)){
 switch ($_GET['action'])
 {
