@@ -33,7 +33,7 @@ class Rules {
     }
 
     if ( $winnerCt !== 1 ) {
-      throw new Exception ( "There can only be one Winner" ) ;
+      throw new Exception ( "There must be exactly one winner. $winnerCt reported" ) ;
     }
   }
 
@@ -52,7 +52,7 @@ class Rules {
 
     foreach ( $nameCts as $ct ) {
       if ( $ct > 1 ) {
-        throw new Exception ( "A player can only appear once in a match" ) ;
+        throw new Exception ( "A player may only appear once in a match" ) ;
       }
     }
   }
@@ -62,7 +62,7 @@ class Rules {
 
     foreach ( $match as $player ) {
       if ( $player [ $linesIx ] < 0 ) {
-        throw new Exception ( "Lines value must be greater than zero" ) ;
+        throw new Exception ( "Lines value must be >= 0" ) ;
       }
     }
   }
@@ -72,7 +72,7 @@ class Rules {
 
     foreach ( $match as $player ) {
       if ( $player [ $minutesIx ] < 0 ) {
-        throw new Exception ( "Minutes value must be greater than zero" ) ;
+        throw new Exception ( "Minutes value must be >= 0" ) ;
       }
     }
   }
@@ -82,7 +82,7 @@ class Rules {
 
     foreach ( $match as $player ) {
       if ( $player [ $secondsIx ] < 0 ) {
-        throw new Exception ( "Seconds value must be greater than zero" ) ;
+        throw new Exception ( "Seconds value must be >= 0" ) ;
       }
     }
   }
@@ -92,7 +92,7 @@ class Rules {
 
     foreach ( $match as $player ) {
       if ( $player [ $timeIx ] < 0 ) {
-        throw new Exception ( "Time value must be greater than zero" ) ;
+        throw new Exception ( "Time value must be >= 0" ) ;
       }
     }
   }

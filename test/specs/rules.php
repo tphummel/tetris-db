@@ -55,7 +55,7 @@ $tests = array (
     $result = Rules::validateMatch ( $fixture ) ;
 
     Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "There can only be one Winner" ) ;
+    Assertion::same ( $result [ "errMsg" ] , "There must be exactly one winner. 2 reported" ) ;
 
   },
 
@@ -69,7 +69,7 @@ $tests = array (
     $result = Rules::validateMatch ( $fixture ) ;
 
     Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "A player can only appear once in a match" ) ;
+    Assertion::same ( $result [ "errMsg" ] , "A player may only appear once in a match" ) ;
 
   }, 
 
@@ -83,7 +83,7 @@ $tests = array (
     $result = Rules::validateMatch ( $fixture ) ;
 
     Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Lines value must be greater than zero" ) ;
+    Assertion::same ( $result [ "errMsg" ] , "Lines value must be >= 0" ) ;
 
   }, 
 
@@ -97,7 +97,7 @@ $tests = array (
     $result = Rules::validateMatch ( $fixture ) ;
 
     Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Minutes value must be greater than zero" ) ;
+    Assertion::same ( $result [ "errMsg" ] , "Minutes value must be >= 0" ) ;
 
   }, 
 
@@ -111,7 +111,7 @@ $tests = array (
     $result = Rules::validateMatch ( $fixture ) ;
 
     Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Seconds value must be greater than zero" ) ;
+    Assertion::same ( $result [ "errMsg" ] , "Seconds value must be >= 0" ) ;
 
   }, 
 
@@ -125,7 +125,7 @@ $tests = array (
     $result = Rules::validateMatch ( $fixture ) ;
 
     Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Time value must be greater than zero" ) ;
+    Assertion::same ( $result [ "errMsg" ] , "Time value must be >= 0" ) ;
 
   }, 
 
