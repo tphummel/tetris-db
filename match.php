@@ -1,152 +1,117 @@
 <?php
 
-//left navbar / banner
-
-$title = "The New Tetris - Match Console";
-
-require_once("templates/header.php");
-
-require_once("config/db.php");
-require_once("lib/grade.php");
-require_once("lib/points.inc.php");
-require_once("lib/rankings.inc.php");
-require_once("lib/statPower.php");
-
+$title = "The New Tetris - Match Console" ;
+require_once ( "templates/header.php" ) ;
  
-//create connection obj
-		$connection = mysql_connect($db_host, $db_username, $db_password);
-		if(!$connection)
-        {
-            die ("Could not connect to the database: <br />". mysql_error());
-        }
-        
-        
-        $db_select = mysql_select_db($db_database, $connection);
-        if (!$db_select)
-        {
-            die ("Could not select the database: <br />". mysql_error());
-        }
+require_once ( "config/db.php" ) ;
+require_once ( "lib/grade.php" ) ;
+require_once ( "lib/points.inc.php" ) ;
+require_once ( "lib/rankings.inc.php" ) ;
+require_once ( "lib/statPower.php" ) ;
+
+$connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
+if ( !$connection ) {
+	die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
+}
+    
+$db_select = mysql_select_db ( $db_database, $connection );
+if ( !$db_select ) {
+	die ( "Could not select the database: <br />". mysql_error ( ) );
+}
 		
-/*
-collect post data if it exists
-assemble two arrays:
--players array of match data
--ogPlayers array which contains usernames in the original order
-*/
-	require_once dirname ( __FILE__ )  . "/lib/helper.php" ;
+require_once dirname ( __FILE__ )  . "/lib/helper.php" ;
 
-	if(array_key_exists('player1',$_POST)){
-		unset($players);
-		$players = Helper::cleanPlayers ( $_POST ) ;
+if ( array_key_exists ( 'player1', $_POST ) ) {
+	unset ( $players ) ;
+	$players = Helper::cleanPlayers ( $_POST ) ;
 
-		unset ( $ogPlayers ) ;
-		$ogPlayers = array ( ) ;
-		foreach ( $players as $player ) {
-			$ogPlayers[] = $player [ 0 ] ;
-		}
-
-		$location = $_POST["location"];
-		$note = $_POST["note"];
-			
-		/*
-		0 - user
-		1 - lines
-		2 - min
-		3 - sec
-		4 - time
-		5 - winner/wrank
-		6 - lps
-		7- erank
-		*/
-			
+	unset ( $ogPlayers ) ;
+	$ogPlayers = array ( ) ;
+	foreach ( $players as $player ) {
+		$ogPlayers[] = $player [ 0 ] ;
 	}
+
+	$location = $_POST [ "location" ] ;
+	$note = $_POST [ "note" ] ;
+		
+}
 $confirmStr = '';
 
-if(array_key_exists('action', $_GET)){
+if ( array_key_exists('action', $_GET ) ) {
 
-switch ($_GET['action']) {
-	case "add" :
-		require_once dirname ( __FILE__ )  . "/lib/rules.php" ;
+	switch ($_GET['action']) {
+		case "add" :
+			require_once dirname ( __FILE__ )  . "/lib/rules.php" ;
 
-		$valid = Rules::validateMatch ( $players ) ;
-		
-		//reshow form with highlights if error is caught
-		if( $valid [ "isValid" ] == false ) {
-			$errorRegion = true ;
-			showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
-			exit();
-		}
-		
-		//lib/rankings.inc.php
-		$wrankedPlayers = getWinRanks ( $players ) ;
-		$erankedPlayers = getEffRanks ( $wrankedPlayers ) ;
-		
-		//Create TNTMatch Record
-		
-		$nowdate = date ( "Y-m-d" ) ;
-		$nowstamp = date ( "Y-m-d H:i:s" ) ;
+			$valid = Rules::validateMatch ( $players ) ;
+			
+			//reshow form with highlights if error is caught
+			if( $valid [ "isValid" ] == false ) {
+				$errorRegion = true ;
+				showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
+				exit();
+			}
+			
+			$wrankedPlayers = getWinRanks ( $players ) ;
+			$erankedPlayers = getEffRanks ( $wrankedPlayers ) ;
+			
+			//Create TNTMatch Record
+			
+			$nowdate = date ( "Y-m-d" ) ;
+			$nowstamp = date ( "Y-m-d H:i:s" ) ;
 
-    $insertTM = "
-    	INSERT INTO tntmatch VALUES 
-    	(NULL, '" . $nowdate . "', '" . $nowstamp . "', 4, 
-				(SELECT locationid from location where locationname = '" . $location . "'), 
-			'" . $note . "', 1)" ;
-		
-		mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
-		
-		//Create PlayerMatch Records
-		$current = mysql_insert_id ( ) ; 
-		
-		$insertPM = "INSERT INTO playermatch VALUES ";
-		foreach ( $erankedPlayers as $player ) {
-			$insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," . 
-                        $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), "; 
-		
-		}
-		$insertPM_trimmed = rtrim($insertPM, ", ");
+	    $insertTM = "
+	    	INSERT INTO tntmatch VALUES 
+	    	(NULL, '" . $nowdate . "', '" . $nowstamp . "', 4, 
+					(SELECT locationid from location where locationname = '" . $location . "'), 
+				'" . $note . "', 1)" ;
+			
+			mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
+			
+			//Create PlayerMatch Records
+			$current = mysql_insert_id ( ) ; 
+			
+			$insertPM = "INSERT INTO playermatch VALUES ";
+			foreach ( $erankedPlayers as $player ) {
+				$insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," . 
+	                        $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), "; 
+			
+			}
+			$insertPM_trimmed = rtrim($insertPM, ", ");
 
-		$confirmStr = "Match #" . $current . "<br>" . $nowstamp;
-        
-		
-		mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
-	break;
-} // END SWITCHCASE ADD
+			$confirmStr = "Match #" . $current . "<br>" . $nowstamp;
+	        
+			
+			mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
+		break;
+	} // END SWITCHCASE ADD
 } // END check array_key_exists('action',$_GET)
 
 //this happens on every load
 //clear post data for start of new match
-		$users = array();
-		$temp = array();
+$users = array();
+$temp = array();
 
-		if(isset($ogPlayers))
-		{
-			foreach ($ogPlayers as $ogp)
-			{
-				foreach ($players as $p)
-				{
-					if($ogp == $p[0])
-					{
-						$users[] = $p;
-					}
-				}
+if ( isset ( $ogPlayers ) ) {
+	foreach ( $ogPlayers as $ogp ) {
+		foreach ( $players as $p ) {
+			if ( $ogp == $p [ 0 ] ) {
+				$users[] = $p;
 			}
 		}
-		else
-		{
-			for($i=0; $i<4; $i++)
-			{
-				$user = array("", "", "", "", "", "");
-				$users[$i] = $user;
-			}
-		}
-		
-		for ($q = 1; $q <= 4; $q++)
-		{
-			unset($_POST["player" . $q]);
-		} 
-		
-		showConsole($users, $connection, $confirmStr, "", "", "", "");
-		
+	}
+} else {
+	for ( $i = 0 ; $i < 4 ; $i++ ) {
+		$user = array ( "", "", "", "", "", "" ) ;
+		$users [ $i ] = $user ;
+	}
+}
+
+for ($q = 1; $q <= 4; $q++) {
+	unset ( $_POST [ "player" . $q ] ) ;
+} 
+
+showConsole( $users, $connection, $confirmStr, "", "", "", "" ) ;
 		
 /*
 ==========================================================================================
@@ -154,13 +119,12 @@ switch ($_GET['action']) {
 */
 function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion, $location, $note) {
 
-	$errorLocStr =  ' class="errorLocation"';
-	if(!empty($errorMsg) AND !empty($errorRegion))
-	{
+	$errorLocStr =  ' class="errorLocation"' ;
+	if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
 		?>
 		<div class="errortext">
 			<?php 
-				echo $errorMsg; 
+				echo $errorMsg ; 
 			?>
 		</div>
 <?php
