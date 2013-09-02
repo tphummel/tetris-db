@@ -6,7 +6,8 @@ require_once ( "templates/header.php" ) ;
 require_once ( "config/db.php" ) ;
 require_once ( "lib/grade.php" ) ;
 require_once ( "lib/points.inc.php" ) ;
-require_once ( "lib/rankings.inc.php" ) ;
+require_once ( "lib/rankings.php" ) ;
+require_once ( "lib/rules.php" ) ;
 require_once ( "lib/statPower.php" ) ;
 
 $connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
@@ -41,7 +42,6 @@ if ( array_key_exists('action', $_GET ) ) {
 
 	switch ($_GET['action']) {
 		case "add" :
-			require_once dirname ( __FILE__ )  . "/lib/rules.php" ;
 
 			$valid = Rules::validateMatch ( $players ) ;
 			
@@ -52,8 +52,8 @@ if ( array_key_exists('action', $_GET ) ) {
 				exit();
 			}
 			
-			$wrankedPlayers = getWinRanks ( $players ) ;
-			$erankedPlayers = getEffRanks ( $wrankedPlayers ) ;
+			$wrankedPlayers = Rankings::setWinRanks ( $players ) ;
+			$erankedPlayers = Rankings::setEffRanks ( $wrankedPlayers ) ;
 			
 			//Create TNTMatch Record
 			
