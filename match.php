@@ -63,8 +63,8 @@ assemble two arrays:
 $confirmStr = '';
 
 if(array_key_exists('action', $_GET)){
-switch ($_GET['action'])
-{
+
+switch ($_GET['action']) {
 	case "add" :
 		require_once dirname ( __FILE__ )  . "/lib/rules.php" ;
 
@@ -73,40 +73,38 @@ switch ($_GET['action'])
 		//reshow form with highlights if error is caught
 		if( $valid [ "isValid" ] == false ) {
 			$errorRegion = true ;
-			showConsole($players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note);
+			showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
 			exit();
 		}
 		
 		//lib/rankings.inc.php
-		$wrankedPlayers = getWinRanks($players);
-		$erankedPlayers = getEffRanks($wrankedPlayers);
-		
-	//var_dump($rankedPlayers);
+		$wrankedPlayers = getWinRanks ( $players ) ;
+		$erankedPlayers = getEffRanks ( $wrankedPlayers ) ;
 		
 		//Create TNTMatch Record
 		
-		$nowdate = date("Y-m-d");
-		$nowstamp = date("Y-m-d H:i:s");
-        $insertTM = "INSERT INTO tntmatch VALUES (NULL, '" . $nowdate . "', '" . $nowstamp . "', 4, 
-		(SELECT locationid from location where locationname = '" . $location . "'), '" . $note . "', 1)";
-		//echo $insertTM;exit;
-		mysql_query($insertTM, $connection) or die(mysql_error());
+		$nowdate = date ( "Y-m-d" ) ;
+		$nowstamp = date ( "Y-m-d H:i:s" ) ;
+
+    $insertTM = "
+    	INSERT INTO tntmatch VALUES 
+    	(NULL, '" . $nowdate . "', '" . $nowstamp . "', 4, 
+				(SELECT locationid from location where locationname = '" . $location . "'), 
+			'" . $note . "', 1)" ;
+		
+		mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
 		
 		//Create PlayerMatch Records
-		//find matchid of tntmatch just created - assumes highest matchid is the current one
-		//$query = "SELECT max(matchid) as lastmatch FROM tntmatch";
-		//$result = mysql_query($query, $connection) or die(mysql_error());
-		$current = mysql_insert_id();//($result, "lastmatch");
+		$current = mysql_insert_id ( ) ; 
 		
 		$insertPM = "INSERT INTO playermatch VALUES ";
-		foreach ($erankedPlayers as $player)
-		{
+		foreach ( $erankedPlayers as $player ) {
 			$insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," . 
                         $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), "; 
 		
 		}
 		$insertPM_trimmed = rtrim($insertPM, ", ");
-		//echo $insertPM_trimmed; exit;
+
 		$confirmStr = "Match #" . $current . "<br>" . $nowstamp;
         
 		
@@ -154,9 +152,8 @@ switch ($_GET['action'])
 ==========================================================================================
 ==========================================================================================
 */
-function showConsole($users, $connection, $confirmStr, $errorMsg, $errorRegion, $location, $note)
-{
-//ini_set('display_errors', true);
+function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion, $location, $note) {
+
 	$errorLocStr =  ' class="errorLocation"';
 	if(!empty($errorMsg) AND !empty($errorRegion))
 	{
