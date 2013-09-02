@@ -10,7 +10,8 @@ $specFiles = array (
   "sample",
   "grade",
   "rankings",
-  "helper"
+  "helper",
+  "rules"
 ) ;
 
 $passCount = 0 ;
