@@ -1,6 +1,6 @@
 <?php
 use Assert\Assertion ;
-require dirname ( __FILE__ ) . "/../../lib/rankings.inc.php" ;
+require dirname ( __FILE__ ) . "/../../lib/rankings.php" ;
 
 /* 
 wrank product
@@ -29,7 +29,7 @@ $wrank = array (
       array ( "name" => "Tom", "wrank" => 2 ),
     ) ; 
 
-    $results = getWinRanks ( $fixture ) ;
+    $results = Rankings::setWinRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -52,7 +52,7 @@ $wrank = array (
       array ( "name" => "Dan", "wrank" => 3 ),
     ) ; 
 
-    $results = getWinRanks ( $fixture ) ;
+    $results = Rankings::setWinRanks ( $fixture ) ;
     
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -74,7 +74,7 @@ $wrank = array (
       array ( "name" => "Dan", "wrank" => 2 ),
     ) ; 
 
-    $results = getWinRanks ( $fixture ) ;
+    $results = Rankings::setWinRanks ( $fixture ) ;
     
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -98,7 +98,7 @@ $wrank = array (
       array ( "name" => "Jeran", "wrank" => 4 ),
     ) ; 
 
-    $results = getWinRanks ( $fixture ) ;
+    $results = Rankings::setWinRanks ( $fixture ) ;
     
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -122,7 +122,7 @@ $wrank = array (
       array ( "name" => "Jeran", "wrank" => 3 ),
     ) ; 
 
-    $results = getWinRanks ( $fixture ) ;
+    $results = Rankings::setWinRanks ( $fixture ) ;
     
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -146,7 +146,7 @@ $wrank = array (
       array ( "name" => "Jeran", "wrank" => 2 ),
     ) ; 
 
-    $results = getWinRanks ( $fixture ) ;
+    $results = Rankings::setWinRanks ( $fixture ) ;
     
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -169,7 +169,7 @@ $erank = array (
       array ( "name" => "JD", "erank" => 2 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
     
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -191,7 +191,7 @@ $erank = array (
       array ( "name" => "Tom", "erank" => 1 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
     
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -213,7 +213,7 @@ $erank = array (
       array ( "name" => "Jeran", "erank" => 3 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -235,7 +235,7 @@ $erank = array (
       array ( "name" => "Jeran", "erank" => 2 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -257,7 +257,7 @@ $erank = array (
       array ( "name" => "Jeran", "erank" => 3 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -279,7 +279,7 @@ $erank = array (
       array ( "name" => "Jeran", "erank" => 1 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -303,7 +303,7 @@ $erank = array (
       array ( "name" => "JD", "erank" => 4 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -327,7 +327,7 @@ $erank = array (
       array ( "name" => "JD", "erank" => 3 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -351,7 +351,7 @@ $erank = array (
       array ( "name" => "JD", "erank" => 4 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -375,7 +375,7 @@ $erank = array (
       array ( "name" => "JD", "erank" => 4 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
 
     foreach ($results as $i => $player) {
       Assertion::same ( $player [ 0 ] , $expected [ $i ][ "name" ] ) ;
@@ -399,7 +399,7 @@ $erank = array (
       array ( "name" => "JD", "erank" => 2 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
     // echo "<pre>";print_r ($results);echo "</pre>";
     # something is going on here. 6 results come back
     # looped over expected to be sure we only check four records
@@ -425,7 +425,7 @@ $erank = array (
       array ( "name" => "JD", "erank" => 4 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
     foreach ($expected as $i => $player) {
       Assertion::same ( $results [ $i ] [ 0 ] , $player[ "name" ] ) ;
       Assertion::same ( $results [ $i ] [ 7 ] , $player[ "erank" ] ) ;
@@ -448,7 +448,7 @@ $erank = array (
       array ( "name" => "JD", "erank" => 1 ),
     ) ; 
 
-    $results = getEffRanks ( $fixture ) ;
+    $results = Rankings::setEffRanks ( $fixture ) ;
     foreach ($expected as $i => $player) {
       Assertion::same ( $results [ $i ] [ 0 ] , $player[ "name" ] ) ;
       Assertion::same ( $results [ $i ] [ 7 ] , $player[ "erank" ] ) ;
