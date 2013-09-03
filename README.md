@@ -18,6 +18,7 @@ future report ideas:
     - move queries to own file
     - field list always the same?
     - add date range to all if set
+    - add player dropdown
 - match console
   - zero initial power values
   - more rows for trailing averages
@@ -28,6 +29,14 @@ future report ideas:
     - so we might be able to refactor someday. split apart match console into directory w/ files
 
 - eff rank. tie goes to the longer round. if still tied, then tied
+- naturals +10 seconds, +20 seconds
+- 2 player head to head report
+  - double naturals
+- individual player profile
+  - collecting one of every line # round
+  - collecting one of every second # round
+
+
 
 
 

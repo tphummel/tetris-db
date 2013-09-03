@@ -1,423 +1,130 @@
 <?php
 
-//left navbar / banner
-
-$title = "The New Tetris - Match Console";
-
-require_once("templates/header.php");
-
-require_once("config/db.php");
-require_once("lib/grade.php");
-require_once("lib/points.inc.php");
-require_once("lib/rankings.inc.php");
-require_once("lib/statPower.php");
-
+$title = "The New Tetris - Match Console" ;
+require_once ( "templates/header.php" ) ;
  
-//create connection obj
-		$connection = mysql_connect($db_host, $db_username, $db_password);
-		if(!$connection)
-        {
-            die ("Could not connect to the database: <br />". mysql_error());
-        }
-        
-        
-        $db_select = mysql_select_db($db_database, $connection);
-        if (!$db_select)
-        {
-            die ("Could not select the database: <br />". mysql_error());
-        }
+require_once ( "config/db.php" ) ;
+require_once ( "lib/grade.php" ) ;
+require_once ( "lib/points.inc.php" ) ;
+require_once ( "lib/rankings.php" ) ;
+require_once ( "lib/rules.php" ) ;
+require_once ( "lib/statPower.php" ) ;
+
+$connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
+if ( !$connection ) {
+	die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
+}
+    
+$db_select = mysql_select_db ( $db_database, $connection );
+if ( !$db_select ) {
+	die ( "Could not select the database: <br />". mysql_error ( ) );
+}
 		
-/*
-collect post data if it exists
-assemble two arrays:
--players array of match data
--ogPlayers array which contains usernames in the original order
-*/
-	if(array_key_exists('player1',$_POST)){
-		unset($players);
-		unset($ogPlayers);
-		$ogPlayers = array();
-		for ($t = 1; $t <= 4; $t++)
-		{
-			//initially holds post array
-			$pTemp = $_POST["player" . $t];
-			//holds trimmed values from post array
-			$trimmedVals = array();
-			
-			//clean up post array values
-			foreach($pTemp as $val)
-			{
-				$trimmedVals[] = trim($val);
-			}
-			
-			if ($trimmedVals != NULL && $trimmedVals[0] != "VACANT")
-			{
-				//lines
-				if($trimmedVals[1] == "")
-				{
-					
-					$trimmedVals[1] = 0;
-				}
-				//min
-				if($trimmedVals[2] == "")
-				{
-					$trimmedVals[2] = 0;
-				}
-				//sec
-				if($trimmedVals[3] == "")
-				{
-					$trimmedVals[3] = 0;
-				}
-				if(array_key_exists(4, $trimmedVals)){
-					$pWin = $trimmedVals[4]; //save win
-				}else{
-					$pWin = "";
-				}
-				$trimmedVals[4] = ($trimmedVals[2]*60) + $trimmedVals[3]; //set time to slot 4
-				$trimmedVals[5] = $pWin; //set win to slot 5
-				
-				//lps
-				if($trimmedVals[4] > 0) //if time above 0, divide else return 0
-				{
-					$trimmedVals[6] = $trimmedVals[1] / $trimmedVals[4]; //set lps to slot 6
-				}
-				else
-				{
-					$trimmedVals[6] = 0;
-				}
-				$players[] = $trimmedVals;
-				$ogPlayers[] = $trimmedVals[0];  //array of original name order for maintaining player order after sorting.
-			}
-		}
-			
-		/*
-		0 - user
-		1 - lines
-		2 - min
-		3 - sec
-		4 - time
-		5 - winner/wrank
-		6 - lps
-		7- erank
-		*/
-			
-		
-		$location = $_POST["location"];
-		$note = $_POST["note"];
+require_once dirname ( __FILE__ )  . "/lib/helper.php" ;
+
+if ( array_key_exists ( 'player1', $_POST ) ) {
+	unset ( $players ) ;
+	$players = Helper::cleanPlayers ( $_POST ) ;
+
+	unset ( $ogPlayers ) ;
+	$ogPlayers = array ( ) ;
+	foreach ( $players as $player ) {
+		$ogPlayers[] = $player [ 0 ] ;
 	}
+
+	$location = $_POST [ "location" ] ;
+	$note = $_POST [ "note" ] ;
+		
+}
 $confirmStr = '';
-if(array_key_exists('action', $_GET)){
-switch ($_GET['action'])
-{
-	case "add" :
-		//validate POST data
-		$errorStatus = false;
-		$errorMsg = "";
-		$errorRegion = -1;
-		
-		//error checks, if any fails $errorStatus changed 
-		//error regions 1-16 are individual controls.  17-20 are entire rows of controls.  21-24 are entire columns of controls.  
-		/*
-		each player
-		name = 	1 5  9 13 
-		lines = 	2 6 10 14
-		min/sec = 	3 7 11 15
-		winner = 	4 8 12 16
-		
-		everyone
-		names = 17
-		lines = 18
-		min/sec = 19
-		winner = 20
-		
-		whole player
-		p1 = 21
-		p2 = 22
-		p3 = 23
-		p4 = 24
-		
-		2 player times = 25
-		*/
-		
-		//two times must match, top two times must match - find highest time, see if another matches it
-		
-		
-		$winnerIndex = -1;
-		$winnerCt = 0;
-		for($i=0; $i<=3; $i++)
-		{
-			if(isset($players[$i]))
-			{
-				$p = $players[$i];
-				
-				if($p[5] == "on")
-				{
-					$winnerCt++;
-					$winnerIndex = $i;
-				}
+
+if ( array_key_exists('action', $_GET ) ) {
+
+	switch ($_GET['action']) {
+		case "add" :
+
+			$valid = Rules::validateMatch ( $players ) ;
+			
+			//reshow form with highlights if error is caught
+			if( $valid [ "isValid" ] == false ) {
+				$errorRegion = true ;
+				showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
+				exit();
 			}
-		}
-		//1 winner only
-		//problem when the winner leaves time blank.  It gets the error for wrong number of winners even if only 1 is selected.  
-		//echo $winnerCt;
-		if($winnerCt != 1)
-		{
-			$errorStatus = TRUE;
-			$errorRegion = 20;
-			$errorMsg = "There can only be one Winner";
-		}
-		
-		//no name duplicates
-		$start = 1;
-		for($i=0;$i<4;$i++)
-		{
-			for($j=$start; $j<4; $j++)
-			{
-				if(array_key_exists($j,$ogPlayers) && array_key_exists($i, $ogPlayers)){
-				//echo "[" . $ogPlayers[$i] . "-" . $ogPlayers[$j] . "]";
-					if($ogPlayers[$i]==$ogPlayers[$j] and !empty($ogPlayers[$j]))
-					{
-						$errorStatus = TRUE;
-						//highlights the repeated(2nd) name field
-						$errorRegion = 1 + (4*$j);
-						//$errorRegion = 17; //this gets whole row
-						$errorMsg = "A player can only appear once in a match";
-					}
-				}
+			
+			$wrankedPlayers = Rankings::setWinRanks ( $players ) ;
+			$erankedPlayers = Rankings::setEffRanks ( $wrankedPlayers ) ;
+			
+			//Create TNTMatch Record
+			
+			$nowdate = date ( "Y-m-d" ) ;
+			$nowstamp = date ( "Y-m-d H:i:s" ) ;
+
+	    $insertTM = "
+	    	INSERT INTO tntmatch VALUES 
+	    	(NULL, '" . $nowdate . "', '" . $nowstamp . "', 4, 
+					(SELECT locationid from location where locationname = '" . $location . "'), 
+				'" . $note . "', 1)" ;
+			
+			mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
+			
+			//Create PlayerMatch Records
+			$current = mysql_insert_id ( ) ; 
+			
+			$insertPM = "INSERT INTO playermatch VALUES ";
+			foreach ( $erankedPlayers as $player ) {
+				$insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," . 
+	                        $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), "; 
+			
 			}
-			$start++;
-		}
-		
-		//lines numeric, integer and >= 0
-		for($i=0; $i<3; $i++)
-		{
-			if(isset($players[$i]))
-			{
-				$p = $players[$i];
-				
-				//LINES
-				if(is_numeric($p[1]))
-				{
-					$lines = intval($p[1]);
-				}
-				else
-				{
-					$errorStatus = TRUE;
-					$errorRegion = 2 + (4*$i);
-					$errorMsg = "Lines value must be an integer";
-				}
-				
-				if($lines < 0)
-				{
-					$errorStatus = TRUE;
-					$errorRegion = 2 + (4*$i);
-					$errorMsg = "Lines value must be greater than zero";
-				}
-				
-				//MIN
-				if(is_numeric($p[2]))
-				{
-					$min = intval($p[2]);
-				}
-				else
-				{
-					$errorStatus = TRUE;
-					$errorRegion = 3 + (4*$i);
-					$errorMsg = "Minutes value must be an integer";
-				}
-				
-				if($min < 0)
-				{
-					$errorStatus = TRUE;
-					$errorRegion = 3 + (4*$i);
-					$errorMsg = "Minutes value must be greater than zero";
-				}
-				
-				//SEC
-				if(is_numeric($p[3]))
-				{
-					$sec = intval($p[3]);
-				}
-				else
-				{
-					$errorStatus = TRUE;
-					$errorRegion = 3 + (4*$i);
-					$errorMsg = "Seconds value must be an integer";
-				}
-				
-				if(isset($sec) and $sec < 0)
-				{
-					$errorStatus = TRUE;
-					$errorRegion = 3 + (4*$i);
-					$errorMsg = "Seconds value must be greater than zero";
-				}
-				
-				//time greater than 0
-				if($p[4] < 1)
-				{
-					$errorStatus = TRUE;
-					$errorRegion = 3 + (4*$i);
-					$errorMsg = "Time value must be greater than zero";
-				}
-				//echo $lines . "-" . $min . "-" . $sec . "<br>";
-			}
-		}
-		
-		//check that winner was in the match longest
-		$max = -1;
-		for($k=0; $k<4; $k++)
-		{
-			if(array_key_exists($k, $players)){
-				$p = $players[$k];
-				if($p[4] >= $max)
-				{
-					$max = $p[4];
-				}
-			}
-		}
-		
-		$firstIsMaxTime = FALSE;
-		for($k=0; $k<4; $k++)
-		{
-			if(array_key_exists($k, $players)){
-				$p = $players[$k];
-				if($p[5] == "on" AND $p[4] == $max)
-				{
-					$firstIsMaxTime = TRUE;
-				}
-			}
-		}
-		
-		if(!$firstIsMaxTime AND $errorStatus != FALSE)
-		{
-			$errorStatus = TRUE;
-			$errorRegion = 21 + $winnerIndex;
-			$errorMsg = "Winner must have played the entire match";
-		}
-		//echo $errorRegion;
-		
-		//2 player match - only have to enter time once
-		/*
-		if(count($players)==2)
-		{
-			$t1 = $players[0][4];
-			$t2 = $players[1][4];
-			if($t1 > 0 and $t2 == 0)
-			{
-				$players[1][4] = $t1;
-			}
-			elseif($t2 > 0 and $t1 == 0)
-			{
-				$players[0][4] = $t2;
-			}
-			elseif($t2 > 0 and $t1 > 0 and $t2 == $t1)
-			{
-				//just leave alone
-			}
-			else
-			{
-				$errorStatus = TRUE;
-				$errorRegion = 25;
-				$errorMsg = "Times must be equal in a 2 player match<br>TIP: In a 2 player match you can leave one player's time blank and it will put the time the same for both players.";
-			}
-		}
-		*/
-		
-		//reshow form with highlights if error is caught
-		if($errorStatus)
-		{
-			showConsole($players, $connection, "", $errorMsg, $errorRegion, $location, $note);
-			exit();
-		}
-		
-		
-		//lib/rankings.inc.php
-		$wrankedPlayers = getWinRanks($players);
-		$erankedPlayers = getEffRanks($wrankedPlayers);
-		
-	//var_dump($rankedPlayers);
-		
-		//Create TNTMatch Record
-		
-		$nowdate = date("Y-m-d");
-		$nowstamp = date("Y-m-d H:i:s");
-        $insertTM = "INSERT INTO tntmatch VALUES (NULL, '" . $nowdate . "', '" . $nowstamp . "', 4, 
-		(SELECT locationid from location where locationname = '" . $location . "'), '" . $note . "', 1)";
-		//echo $insertTM;exit;
-		mysql_query($insertTM, $connection) or die(mysql_error());
-		
-		//Create PlayerMatch Records
-		//find matchid of tntmatch just created - assumes highest matchid is the current one
-		//$query = "SELECT max(matchid) as lastmatch FROM tntmatch";
-		//$result = mysql_query($query, $connection) or die(mysql_error());
-		$current = mysql_insert_id();//($result, "lastmatch");
-		
-		$insertPM = "INSERT INTO playermatch VALUES ";
-		foreach ($erankedPlayers as $player)
-		{
-			$insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," . 
-                        $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), "; 
-		
-		}
-		$insertPM_trimmed = rtrim($insertPM, ", ");
-		//echo $insertPM_trimmed; exit;
-		$confirmStr = "Match #" . $current . "<br>" . $nowstamp;
-        
-		
-		mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
-	break;
-} // END SWITCHCASE ADD
+			$insertPM_trimmed = rtrim($insertPM, ", ");
+
+			$confirmStr = "Match #" . $current . "<br>" . $nowstamp;
+	        
+			
+			mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
+		break;
+	} // END SWITCHCASE ADD
 } // END check array_key_exists('action',$_GET)
 
 //this happens on every load
 //clear post data for start of new match
-		$users = array();
-		$temp = array();
+$users = array();
+$temp = array();
 
-		if(isset($ogPlayers))
-		{
-			foreach ($ogPlayers as $ogp)
-			{
-				foreach ($players as $p)
-				{
-					if($ogp == $p[0])
-					{
-						$users[] = $p;
-					}
-				}
+if ( isset ( $ogPlayers ) ) {
+	foreach ( $ogPlayers as $ogp ) {
+		foreach ( $players as $p ) {
+			if ( $ogp == $p [ 0 ] ) {
+				$users[] = $p;
 			}
 		}
-		else
-		{
-			for($i=0; $i<4; $i++)
-			{
-				$user = array("", "", "", "", "", "");
-				$users[$i] = $user;
-			}
-		}
-		
-		for ($q = 1; $q <= 4; $q++)
-		{
-			unset($_POST["player" . $q]);
-		} 
-		
-		showConsole($users, $connection, $confirmStr, "", "", "", "");
-		
+	}
+} else {
+	for ( $i = 0 ; $i < 4 ; $i++ ) {
+		$user = array ( "", "", "", "", "", "" ) ;
+		$users [ $i ] = $user ;
+	}
+}
+
+for ($q = 1; $q <= 4; $q++) {
+	unset ( $_POST [ "player" . $q ] ) ;
+} 
+
+showConsole( $users, $connection, $confirmStr, "", "", "", "" ) ;
 		
 /*
 ==========================================================================================
 ==========================================================================================
 */
-function showConsole($users, $connection, $confirmStr, $errorMsg, $errorRegion, $location, $note)
-{
-//ini_set('display_errors', true);
-	$errorLocStr =  ' class="errorLocation"';
-	if(!empty($errorMsg) AND !empty($errorRegion))
-	{
+function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion, $location, $note) {
+
+	$errorLocStr =  ' class="errorLocation"' ;
+	if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
 		?>
 		<div class="errortext">
 			<?php 
-				echo $errorMsg; 
+				echo $errorMsg ; 
 			?>
 		</div>
 <?php

@@ -1,3 +1,12 @@
+0.5.0 / 2013-09-03
+==================
+  - lib/rules:
+    - created static class for validating matches
+    - wrote tests
+  - lib/rankings:
+    - renamed file
+    - wrapped functions in static class
+
 0.4.0 / 2013-09-01
 ==================
   - lib/rankings: 
