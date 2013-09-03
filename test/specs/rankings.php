@@ -454,6 +454,29 @@ $erank = array (
       Assertion::same ( $results [ $i ] [ 7 ] , $player[ "erank" ] ) ;
     }
   },
+
+  # four player - ranks zero lps properly
+  function () {
+    $fixture = array ( 
+      array ( "Dan",   null, null, null, null, null, 1.600 ),
+      array ( "Jeran", null, null, null, null, null, 1.200 ),
+      array ( "Tom",   null, null, null, null, null, 1.000 ),
+      array ( "JD",    null, null, null, null, null, 0.000 ),
+    ) ;
+
+    $expected = array (
+      array ( "name" => "Dan", "erank" => 1 ),
+      array ( "name" => "Jeran", "erank" => 2 ),
+      array ( "name" => "Tom", "erank" => 3 ),
+      array ( "name" => "JD", "erank" => 4 ),
+    ) ; 
+
+    $results = Rankings::setEffRanks ( $fixture ) ;
+    foreach ($expected as $i => $player) {
+      Assertion::same ( $results [ $i ] [ 0 ] , $player[ "name" ] ) ;
+      Assertion::same ( $results [ $i ] [ 7 ] , $player[ "erank" ] ) ;
+    }
+  },
 ) ;
 
 

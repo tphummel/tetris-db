@@ -166,7 +166,6 @@ class Rankings {
 
 	public static function setEffRanks ( $wrankedPlayers ) {
 		//generate erank
-		// 12/17/2010 - not ranking lps of zero correctly
 			
 			$lpsArr = array(); //array of player lps values
 			$finishedPlayers = array();
