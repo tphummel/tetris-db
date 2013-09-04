@@ -1,3 +1,9 @@
+0.6.0 / 2013-09-04
+==================
+  - new report:
+    - /reports/player-profile (with single option: collection)
+  - templates: absolute paths in header/footer
+
 0.5.0 / 2013-09-03
 ==================
   - lib/rules:
