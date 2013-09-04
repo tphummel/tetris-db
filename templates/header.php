@@ -10,8 +10,8 @@
     <title><?php echo $title ?></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="assets/css/normalize.css">
-    <link rel="stylesheet" href="assets/css/tnt.css" />
+    <link rel="stylesheet" href="/assets/css/normalize.css">
+    <link rel="stylesheet" href="/assets/css/tnt.css" />
     <script src="assets/js/vendor/modernizr-2.6.2.min.js"></script>
   </head>
 
@@ -19,6 +19,6 @@
     <table width="100%" border="1" cellpadding="10">
       <tr>
         <td align="center" valign="top" width="15%" height="50px">
-          <a href="index.php"><img src="assets/img/tntbox.JPG"></a>
+          <a href="index.php"><img src="/assets/img/tntbox.JPG"></a>
         </td>
         <td valign="top" width="85%" rowspan="2">
