@@ -36,7 +36,10 @@ future report ideas:
   - collecting one of every line # round
   - collecting one of every second # round
 
-
+- match transcript screen
+  - date, timestamp, order, sums
+  - with delete button
+  - with edit button
 
 
 
