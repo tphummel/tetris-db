@@ -17,6 +17,8 @@ class Player {
 
     $result = DB::sqlToArray ( $sql ) ;
 
+    return $result ;
+
   }
 
 }
