@@ -64,7 +64,6 @@ function doForm ( ) {
     <select name="report">
       <option value="collection">Performance Collection</option>
     </select>
-    <br />
     <input type="submit" value="submit">
     </form>
     <?php
@@ -175,6 +174,7 @@ FROM   (SELECT p.lines,
 GROUP  BY a.lines 
     " ;
 
+
   echo '
   <style type="text/css">
     .table-container table { border-left: 1px solid black ;}
@@ -182,6 +182,7 @@ GROUP  BY a.lines
     .owned { background: green; }
     .unowned { background: red ; }
   </style>' ;
+
   $result = mysql_query($sql, $connection) or die(mysql_error());
 
   $organized = organizeData ( $result ) ;
@@ -195,7 +196,16 @@ GROUP  BY a.lines
   $tables = array ( ) ;
 
   echo "<h3>Player Collection Report</h3>" ;
-  echo "<h4>Player: $player</h5>" ;
+
+  require ( dirname ( __FILE__ ) . "/shared/player.php");
+  $playerData = Player::getPlayer ( $player ) ;
+
+  ?>
+
+
+  <h4>Player: <?= $playerData["firstname"]. ' ' . $playerData["lastname"] ?></h4>
+
+  <?php
 
   echo "<h4>" ;
 
