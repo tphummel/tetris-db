@@ -47,7 +47,7 @@ function getPlayers ( ) {
 function doForm ( ) {
   ?>
   <h1>Player Profile Reports</h1>
-    <form action="player-profile.php" method="GET">
+    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
     <select name="player">
       <?php
       $players = getPlayers ( ) ;
