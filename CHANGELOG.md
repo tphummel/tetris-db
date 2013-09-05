@@ -1,3 +1,9 @@
+0.6.1 / 2013-09-04
+==================
+  - moved report files into reports/
+  - new helpers: shared/db, shared/player
+  - reports/player-profile: added player name label
+
 0.6.0 / 2013-09-04
 ==================
   - new report:

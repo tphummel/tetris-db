@@ -18,10 +18,10 @@
 Reports:
 <table>
 
-<tr><td><a href="/rptSummary.php">Summary</a></td></tr>
-<tr><td><a href="/rptPerformance.php">Performance</a></td></tr>
-<tr><td><a href="/rptCollab.php">Match Strength</a></td></tr>
-<tr><td><a href="/rptPerfDist.php">Win Expectancy</a></td></tr>
+<tr><td><a href="/reports/summary.php">Summary</a></td></tr>
+<tr><td><a href="/reports/performance.php">Performance</a></td></tr>
+<tr><td><a href="/reports/match-strength.php">Match Strength</a></td></tr>
+<tr><td><a href="/reports/performance-dist.php">Win Expectancy</a></td></tr>
 <tr><td><a href="/reports/player-profile.php">Player Profile</a></td></tr>
 
 <tr><td></td></tr>
@@ -32,7 +32,7 @@ Reports:
 	</table>
 </td>
 </tr>
-<tr><td align="center" colspan="2">Copyright 2007 Tom Hummel</td></tr></table>
+<tr><td align="center" colspan="2">Copyright 2007 <a href="http://www.tomhummel.com">Tom Hummel</a></td></tr></table>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

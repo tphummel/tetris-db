@@ -3,48 +3,31 @@ $title = "Reports : Summary";
 
 //left navbar / banner
 
-require_once("templates/header.php");
-require_once("config/db.php");
-require_once("lib/points.inc.php");
-require_once("lib/statPower.php");
+$dir = dirname ( __FILE__ ) ;
+
+require_once($dir . "/../templates/header.php");
+require_once($dir . "/../config/db.php");
+require_once($dir . "/../lib/points.inc.php");
+require_once($dir . "/../lib/statPower.php");
 
 //create connection obj
-		$connection = mysql_connect($db_host, $db_username, $db_password);
-		if(!$connection)
-        {
-            die ("Could not connect to the database: <br />". mysql_error());
-        }
-        
-        
-        $db_select = mysql_select_db($db_database, $connection);
-        if (!$db_select)
-        {
-            die ("Could not select the database: <br />". mysql_error());
-        }
+$connection = mysql_connect($db_host, $db_username, $db_password);
+if(!$connection){
+  die ("Could not connect to the database: <br />". mysql_error());
+}
 
 
-		$startDate = NULL;
-		$endDate = NULL;
-		if (isset($_GET['sDate'],$_GET['eDate'])){
-			$sDate = $_GET['sDate'];
-			$sDate = new DateTime($sDate);
-			$startDate = date_format($sDate, 'Y-m-d');
-			
-			$eDate = $_GET['eDate'];
-			$eDate = new DateTime($eDate);
-			$endDate = date_format($eDate, 'Y-m-d');
-			
-		}else{
-			$startDate = '2000-01-01';
-			$endDate = '2020-12-31';
-		}
+$db_select = mysql_select_db($db_database, $connection);
+if (!$db_select) {
+  die ("Could not select the database: <br />". mysql_error());
+}
 
 ?>
 <div class="report">
 <h1>Summary Reports</h1>
-<form action="rptSummary.php" method="get">
-	Start Date:<input type="text" name="sDate" id="start" value="<?php echo $startDate ?>"><br>
-	End Date:<input type="text" name="eDate" id="end" value="<?php echo $endDate ?>"><br>
+<form action="<?= $_SERVER['PHP_SELF'] ?>" method="get">
+	Start Date:<input type="text" name="sDate" id="start"><br>
+	End Date:<input type="text" name="eDate" id="end"><br>
 	<br>
 	<input type="submit" value="submit">
 
@@ -156,7 +139,7 @@ group by pm.playerid";
 		$power1 = computePower($wptsg, $eptsg, $totLps);
 		//write player row
 		echo '<tr>
-		<td class="data"><a href="playerinfo.php?playerid=' . $uid . '" target="_blank">' . $uname . '</a></td>
+		<td class="data"><a href="/playerinfo.php?playerid=' . $uid . '" target="_blank">' . $uname . '</a></td>
 		<td class="data">' . $totgames . '</td><td class="data">' . $timeStr . '</td><td class="data">' . $totlines . '</td>
 		<td class="data">' . $tpgstr . '</td><td class="data">' . $totLpg . '</td><td class="data">' . $totLps . '</td>
 		<td class="data">' . $wptsg . '</td><td class="data">' . $eptsg . '</td>
@@ -265,8 +248,10 @@ group by pm.playerid";
 			$power1 = number_format($wptsg + (.5 * $eptsg) + $totLps,3);
 			
 			//write player row
+			$playerUrl = "/playerinfo.php?playerid=$uid" ;
+
 			echo '<tr>
-			<td class="data"><a href="playerinfo.php?playerid=' . $uid . '">' . $uname . '</a></td>
+			<td class="data"><a href="'.$playerUrl.'">' . $uname . '</a></td>
 			<td class="data">' . $totgames . '</td><td class="data">' . $timeStr . '</td><td class="data">' . $totlines . '</td>
 			<td class="data">' . $tpgstr . '</td><td class="data">' . $totLpg . '</td><td class="data">' . $totLps . '</td>
 			<td class="data">' . $wptsg . '</td><td class="data">' . $eptsg . '</td>
@@ -284,7 +269,7 @@ group by pm.playerid";
 </div>
 <?php
 
-require_once("templates/footer.php");
+require_once(dirname ( __FILE__ ) . "/../templates/footer.php");
 ?>
 </body>
 </html>
