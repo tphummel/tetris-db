@@ -100,7 +100,7 @@ class Helper {
 
     $line = self::matchToString ( $players, $location ) ;
 
-    $line = date ( "Y-m-d H:i:s" ) . $line . ',';
+    $line = date ( "Y-m-d H:i:s" ) . $line;
 
     file_put_contents ( $logFile , $line, FILE_APPEND ) ;
 
