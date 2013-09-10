@@ -1,3 +1,7 @@
+0.6.3 / 2013-09-09
+==================
+  - bug: added location to match logging
+
 0.6.2 / 2013-09-09
 ==================
   - added match logging
