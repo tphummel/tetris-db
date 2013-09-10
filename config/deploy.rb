@@ -122,4 +122,4 @@ end
 before 'deploy:setup', 'deploy:create_deploy_to'
 after 'deploy:setup', 'config:create_dir', 'config:touch_db_conf', 'deploy:write_nginx_config', 'log:touch_log'
 
-after "deploy:finalize_update", "config:create_symlink", "log:create_symlink"
+after "deploy:finalize_update", "config:create_symlink"
