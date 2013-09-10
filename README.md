@@ -10,6 +10,14 @@ future report ideas:
     - single player
       - vs each other player
 
+- perf rarity
+  - how many times has the line total been done ever, this match type
+
+- global time-line matrix
+  lines (y), time (x)
+
+- statistics in R 
+
 "lines won"
 
 - move reports to sub dir
