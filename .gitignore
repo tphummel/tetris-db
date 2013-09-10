@@ -3,3 +3,4 @@ include/DB*
 data/*.sql
 python-report/
 .vagrant/
+log/
