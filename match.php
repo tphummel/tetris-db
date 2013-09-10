@@ -52,7 +52,7 @@ if ( array_key_exists('action', $_GET ) ) {
 				exit();
 			}
 
-			Helper::logMatch ( $players ) ;
+			Helper::logMatch ( $players, $location ) ;
 
 			$wrankedPlayers = Rankings::setWinRanks ( $players ) ;
 			$erankedPlayers = Rankings::setEffRanks ( $wrankedPlayers ) ;
