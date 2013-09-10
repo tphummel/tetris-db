@@ -1,6 +1,7 @@
 <?php
 
 class Helper {
+
   private static function isPlayer ( $key ) {
     return strpos ( $key , "player" ) !== false ;
   }
@@ -73,6 +74,35 @@ class Helper {
       $player = self::cleanPlayer ( $player ) ;
     }
     return array_filter ( $players ) ; 
+  }
+
+  public static function matchToString ( $players, $location ) {
+    $values = array ( ) ;
+
+    $values[] = $location ;
+
+    foreach ( $players as $player ) {
+      array_push ( $values , 
+        $player [ 0 ] , $player [ 1 ] , $player [ 4 ] , $player [ 5 ]
+      ) ; 
+
+    }
+
+    # location, [name, lines, time, winner] per player
+    $line = implode ( $values , "," ) . "\n" ;
+
+    return $line ;
+
+  }
+
+  public static function logMatch ($players, $location) {
+    $logFile = dirname ( __FILE__ ) . "/../log/match.log" ;
+
+    $line = self::matchToString ( $players, $location ) ;
+
+    $line = date ( "Y-m-d H:i:s" ) . $line . ',';
+
+    file_put_contents ( $logFile , $line, FILE_APPEND ) ;
 
   }
 }
