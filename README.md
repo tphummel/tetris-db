@@ -10,6 +10,14 @@ future report ideas:
     - single player
       - vs each other player
 
+- perf rarity
+  - how many times has the line total been done ever, this match type
+
+- global time-line matrix
+  lines (y), time (x)
+
+- statistics in R 
+
 "lines won"
 
 - move reports to sub dir
@@ -30,8 +38,11 @@ future report ideas:
 
 - eff rank. tie goes to the longer round. if still tied, then tied
 - naturals +10 seconds, +20 seconds
-- 2 player head to head report
+
+- 2 player head to head report (dedicated 2player only section)
   - double naturals
+  - elo ratings
+
 - individual player profile
   - collecting one of every line # round
   - collecting one of every second # round
@@ -40,6 +51,9 @@ future report ideas:
   - date, timestamp, order, sums
   - with delete button
   - with edit button
+
+- logging: log every submit of match.php
+
 
 
 

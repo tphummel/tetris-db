@@ -94,6 +94,22 @@ namespace :config do
   end
 end
 
+namespace :log do
+  desc "touch log"
+  task :touch_log do
+    run "touch #{shared_path}/log/match.log"
+    run "chmod 777 #{shared_path}/log/match.log"
+  end
+
+  desc "symlink match log file"
+  task :create_symlink do
+    run "ln -nfs #{shared_path}/log/match.log #{release_path}/log/match.log"
+  end
+
+
+
+end
+
 namespace :git do
 
   desc "Delete remote cache"
@@ -104,6 +120,6 @@ namespace :git do
 end
 
 before 'deploy:setup', 'deploy:create_deploy_to'
-after 'deploy:setup', 'config:create_dir', 'config:touch_db_conf', 'deploy:write_nginx_config'
+after 'deploy:setup', 'config:create_dir', 'config:touch_db_conf', 'deploy:write_nginx_config', 'log:touch_log'
 
-after "deploy:finalize_update", "config:create_symlink"
+after "deploy:finalize_update", "config:create_symlink", "log:create_symlink"

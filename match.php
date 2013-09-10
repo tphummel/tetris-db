@@ -51,10 +51,12 @@ if ( array_key_exists('action', $_GET ) ) {
 				showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
 				exit();
 			}
-			
+
+			Helper::logMatch ( $players ) ;
+
 			$wrankedPlayers = Rankings::setWinRanks ( $players ) ;
 			$erankedPlayers = Rankings::setEffRanks ( $wrankedPlayers ) ;
-			
+
 			//Create TNTMatch Record
 			
 			$nowdate = date ( "Y-m-d" ) ;

@@ -358,8 +358,4 @@ class Rankings {
 		return $erankedPlayers;
 	}
 }
-
-function setEffRanks ( $wrankedPlayers ) {
-	
-}
 ?>

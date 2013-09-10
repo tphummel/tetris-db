@@ -87,6 +87,26 @@ $cleanPlayers = array (
   }
 );
 
-$tests = array_merge ( $cleanPlayers ) ;
+$matchToString = array (
+
+  function(){
+    $fixture = array (
+      array ( "Dan", 10, 1, 0, 60, "", 10/60 ) ,
+      array ( "Tom", 20, 1, 0, 60, "on", 20/60 ) ,
+      array ( "Jeran", 30, 0, 45, 45, "", 30/45 ) ,
+      array ( "JD", 15, 0, 30, 30, "", 15/30 ) ,
+    );
+
+    $location = "Tom's House" ;
+
+    $result = Helper::matchToString ( $fixture , $location ) ;
+
+    $expected = "Tom's House,Dan,10,60,,Tom,20,60,on,Jeran,30,45,,JD,15,30,\n" ; 
+
+    Assertion::same ( $result, $expected , "match to string failed" ) ;
+  }
+) ; 
+
+$tests = array_merge ( $cleanPlayers, $matchToString ) ;
 
 ?>

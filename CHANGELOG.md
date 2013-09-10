@@ -1,3 +1,8 @@
+0.6.2 / 2013-09-09
+==================
+  - added match logging
+  - cap task to manage shared log file
+
 0.6.1 / 2013-09-04
 ==================
   - moved report files into reports/
