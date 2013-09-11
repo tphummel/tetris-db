@@ -1,3 +1,7 @@
+0.6.4 / 2013-09-11
+==================
+  - created /health.php - json health info
+
 0.6.3 / 2013-09-09
 ==================
   - bug: added location to match logging
