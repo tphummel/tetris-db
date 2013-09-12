@@ -10,38 +10,16 @@ if ( array_key_exists ( "player", $_GET ) ) {
   if ( array_key_exists ( "report" , $_GET ) ) {
     $report = $_GET [ "report" ] ;  
   } else {
-    $report = "collection" ;
+    $report = "lines-collect" ;
   }
 
-  if ( $report === "collection" ) {
-    doCollect ( $playerId ) ;  
+  if ( $report === "lines-collect" ) {
+    doCollect ( $playerId, "lines" ) ;  
+  } else if ( $report === "time-collect" ) {
+    doCollect ( $playerId, "time" ) ;  
   }
 } else {
   doForm ( ) ;
-}
-
-function getPlayers ( ) {
-  require ( dirname ( __FILE__ ) . "/../config/db.php");
-
-  //create connection obj
-  $connection = mysql_connect($db_host, $db_username, $db_password);
-  if(!$connection){
-    die ("Could not connect to the database: <br />". mysql_error());
-  }
-  $db_select = mysql_select_db($db_database, $connection);
-  if (!$db_select){
-    die ("Could not select the database: <br />". mysql_error());
-  }
-
-  $sql = "SELECT playerid, username FROM player" ;
-  $result = mysql_query($sql, $connection) or die(mysql_error());
-
-  $players = array ( ) ;
-  while ( $row = mysql_fetch_array ( $result, MYSQL_ASSOC ) ) {
-    $players[] = $row ;
-  }
-
-  return $players ;
 }
 
 function doForm ( ) {
@@ -50,7 +28,8 @@ function doForm ( ) {
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
     <select name="player">
       <?php
-      $players = getPlayers ( ) ;
+      require ( dirname ( __FILE__ ) . "/shared/player.php");
+      $players = Player::getPlayers ( ) ;
 
       foreach ( $players as $player ) {
         $id = $player [ "playerid" ] ;
@@ -62,20 +41,21 @@ function doForm ( ) {
     </select>
 
     <select name="report">
-      <option value="collection">Performance Collection</option>
+      <option value="lines-collect">Lines Collection</option>
+      <option value="time-collect">Time Collection</option>
     </select>
     <input type="submit" value="submit">
     </form>
     <?php
 }
 
-function organizeData ( $data ) {
+function organizeData ( $data, $mode ) {
 
   $final = array ( ) ;
 
   while ( $row = mysql_fetch_array ( $data, MYSQL_ASSOC ) ) {
-    $final [ $row [ "lines" ] ] = array ( ) ;
-    $li =& $final[ $row [ "lines" ] ] ;
+    $final [ $row [ $mode ] ] = array ( ) ;
+    $li =& $final[ $row [ $mode ] ] ;
 
     for ( $i = 2; $i <= 4; $i++ ) {
       if ( isset ( $row [ "ct$i" ] ) ) {
@@ -93,7 +73,7 @@ function organizeData ( $data ) {
 function fillBlanks ( $data ) {
   $empty = array ( "count" => 0, "last" => null ) ;
 
-  for ( $i = 1; $i <= 299; $i ++ ) {
+  for ( $i = 0; $i <= 299; $i ++ ) {
     if ( empty ( $data [ "$i" ] ) ) {
       $data [ $i ] = array ( 
         "2" => $empty,
@@ -136,7 +116,7 @@ function getCompletionPct ( $data ) {
 
 }
 
-function doCollect ( $player ) {
+function doCollect ( $player, $mode="lines" ) {
   require ( dirname ( __FILE__ ) . "/../config/db.php");
 
   //create connection obj
@@ -150,14 +130,14 @@ function doCollect ( $player ) {
   }
 
   $sql = "
-SELECT a.lines, 
+SELECT a.$mode, 
        SUM(IF(a.type = 2, a.ct, 0))   AS ct2, 
        MAX(IF(a.type = 2, a.last, 0)) AS last2, 
        SUM(IF(a.type = 3, a.ct, 0))   AS ct3, 
        MAX(IF(a.type = 3, a.last, 0)) AS last3, 
        SUM(IF(a.type = 4, a.ct, 0))   AS ct4, 
        MAX(IF(a.type = 4, a.last, 0)) AS last4 
-FROM   (SELECT p.lines, 
+FROM   (SELECT p.$mode, 
                (SELECT COUNT(playerid) 
                 FROM   playermatch 
                 WHERE  matchid = t.matchid) AS type, 
@@ -167,11 +147,12 @@ FROM   (SELECT p.lines,
                tntmatch t 
         WHERE  t.matchid = p.matchid 
                AND p.playerid = $player
-        GROUP  BY p.lines, 
+               AND p.$mode < 300
+        GROUP  BY p.$mode, 
                   (SELECT COUNT(playerid) 
                    FROM   playermatch 
                    WHERE  matchid = t.matchid)) a 
-GROUP  BY a.lines 
+GROUP  BY a.$mode 
     " ;
 
 
@@ -185,7 +166,7 @@ GROUP  BY a.lines
 
   $result = mysql_query($sql, $connection) or die(mysql_error());
 
-  $organized = organizeData ( $result ) ;
+  $organized = organizeData ( $result, $mode ) ;
   $filled = fillBlanks ( $organized ) ;
 
   $comp = getCompletionPct ( $filled ) ;
@@ -195,7 +176,7 @@ GROUP  BY a.lines
   $rowsPerTable = 30 ;
   $tables = array ( ) ;
 
-  echo "<h3>Player Collection Report</h3>" ;
+  echo "<h3>Player Collection Report - $mode</h3>" ;
 
   require ( dirname ( __FILE__ ) . "/shared/player.php");
   $playerData = Player::getPlayer ( $player ) ;
@@ -211,12 +192,12 @@ GROUP  BY a.lines
 
   $strs = array ( ) ;
 
-  foreach ( array ( "total", "2", "3", "4") as $mode ) {
-    $ct = $comp [ $mode ] [ "count" ] ;
-    $poss = $comp [ $mode ] [ "possible" ] ;
+  foreach ( array ( "total", "2", "3", "4") as $matchType ) {
+    $ct = $comp [ $matchType ] [ "count" ] ;
+    $poss = $comp [ $matchType ] [ "possible" ] ;
     $pct = round ( ( $ct / $poss ) * 100, 1 ) ;
   
-    $strs[] = "$mode: $ct / $poss ( $pct %)" ; 
+    $strs[] = "$matchType: $ct / $poss ( $pct %)" ; 
   }
 
   echo implode ( "; " , $strs ) ;
@@ -224,7 +205,7 @@ GROUP  BY a.lines
   echo "</h4>" ;
 
 
-  $tableHeader = "<div class=table-container><table><tbody><tr><th>Lines</th><th>2P</th><th>3P</th><th>4P</th>" ;
+  $tableHeader = "<div class=table-container><table><tbody><tr><th>$mode</th><th>2P</th><th>3P</th><th>4P</th>" ;
   $tableFoot = "</tbody></table></div>" ;
 
   foreach ( $filled as $lines => $row ) {
@@ -236,7 +217,7 @@ GROUP  BY a.lines
     }
 
     $rowStr = "<tr>" . "<td>" . $lines . "</td>" ;
-    foreach ( $row as $mode => $detail ) { 
+    foreach ( $row as $mt => $detail ) { 
       $ct = $detail [ "count" ] ;
 
       if ( $ct > 0 ) {
