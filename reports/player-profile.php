@@ -20,37 +20,14 @@ if ( array_key_exists ( "player", $_GET ) ) {
   doForm ( ) ;
 }
 
-function getPlayers ( ) {
-  require ( dirname ( __FILE__ ) . "/../config/db.php");
-
-  //create connection obj
-  $connection = mysql_connect($db_host, $db_username, $db_password);
-  if(!$connection){
-    die ("Could not connect to the database: <br />". mysql_error());
-  }
-  $db_select = mysql_select_db($db_database, $connection);
-  if (!$db_select){
-    die ("Could not select the database: <br />". mysql_error());
-  }
-
-  $sql = "SELECT playerid, username FROM player" ;
-  $result = mysql_query($sql, $connection) or die(mysql_error());
-
-  $players = array ( ) ;
-  while ( $row = mysql_fetch_array ( $result, MYSQL_ASSOC ) ) {
-    $players[] = $row ;
-  }
-
-  return $players ;
-}
-
 function doForm ( ) {
   ?>
   <h1>Player Profile Reports</h1>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
     <select name="player">
       <?php
-      $players = getPlayers ( ) ;
+      require ( dirname ( __FILE__ ) . "/shared/player.php");
+      $players = Player::getPlayers ( ) ;
 
       foreach ( $players as $player ) {
         $id = $player [ "playerid" ] ;
