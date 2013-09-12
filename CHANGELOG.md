@@ -1,3 +1,9 @@
+0.6.5 / 2013-09-12
+==================
+  - reports/player-profile: 
+    - use shared/player helper for loading list
+    - now does "lines" and "time" collection reports
+
 0.6.4 / 2013-09-11
 ==================
   - created /health.php - json health info
