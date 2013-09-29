@@ -1,3 +1,8 @@
+0.7.0 / 2013-09-29
+==================
+  - match pub/sub:
+    - after match save, publish performances to redis channel "tetrisdb:performances"
+
 0.6.5 / 2013-09-12
 ==================
   - reports/player-profile: 

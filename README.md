@@ -18,6 +18,9 @@ future report ideas:
 
 - statistics in R 
 
+- add player and location ddl to perf report
+- redis pub/sub on match creation
+
 "lines won"
 
 - move reports to sub dir
@@ -51,12 +54,6 @@ future report ideas:
   - date, timestamp, order, sums
   - with delete button
   - with edit button
-
-- logging: log every submit of match.php
-
-
-
-
 
 ### Routes/Views
 - index.php
