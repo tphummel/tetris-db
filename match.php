@@ -9,6 +9,7 @@ require_once ( "lib/points.inc.php" ) ;
 require_once ( "lib/rankings.php" ) ;
 require_once ( "lib/rules.php" ) ;
 require_once ( "lib/statPower.php" ) ;
+require_once ( "lib/redis.php" ) ;
 
 $connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
 if ( !$connection ) {
@@ -83,8 +84,12 @@ if ( array_key_exists('action', $_GET ) ) {
 
 			$confirmStr = "Match #" . $current . "<br>" . $nowstamp;
 	        
-			
 			mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
+
+			foreach ( $erankedPlayers as $perf ) {
+			 	Redis::publishPerformance ( $perf ) ;	
+			}
+			
 		break;
 	} // END SWITCHCASE ADD
 } // END check array_key_exists('action',$_GET)
