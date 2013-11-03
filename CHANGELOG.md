@@ -1,3 +1,8 @@
+0.7.1 / 2013-11-03
+==================
+  - match pub/sub:
+    - added 'matchid' to each perf
+
 0.7.0 / 2013-09-29
 ==================
   - match pub/sub:

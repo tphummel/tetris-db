@@ -87,6 +87,7 @@ if ( array_key_exists('action', $_GET ) ) {
 			mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
 
 			foreach ( $erankedPlayers as $perf ) {
+				$perf [ 8 ] = $current ;
 			 	Redis::publishPerformance ( $perf ) ;	
 			}
 			
