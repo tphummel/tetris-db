@@ -22,7 +22,8 @@ class Redis {
       1 => "lines",
       4 => "time",
       5 => "wrank",
-      7 => "erank"
+      7 => "erank",
+      8 => "matchid"
     ) ;
 
     $mapped = array ( ) ;
