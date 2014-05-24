@@ -4,7 +4,7 @@
 
 <tr><td valign="top">
 	<table>
-		
+
 			<td>
 			Match:
 			<table>
