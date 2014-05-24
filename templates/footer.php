@@ -4,7 +4,7 @@
 
 <tr><td valign="top">
 	<table>
-		
+
 			<td>
 			Match:
 			<table>
@@ -20,8 +20,10 @@ Reports:
 
 <tr><td><a href="/reports/summary.php">Summary</a></td></tr>
 <tr><td><a href="/reports/performance.php">Performance</a></td></tr>
+<tr><td>-- <a href="/reports/performance-rarity.php">Rarity</a></td></tr>
+<tr><td>-- <a href="/reports/performance-dist.php">Win Expectancy</a></td></tr>
 <tr><td><a href="/reports/match-strength.php">Match Strength</a></td></tr>
-<tr><td><a href="/reports/performance-dist.php">Win Expectancy</a></td></tr>
+
 <tr><td><a href="/reports/player-profile.php">Player Profile</a></td></tr>
 
 <tr><td></td></tr>

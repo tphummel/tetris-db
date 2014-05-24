@@ -2,6 +2,8 @@ Tetris-DB
 
 web scripts for collecting and viewing Tetris data from The New Tetris on Nintendo 64
 
+- output match_id and player_id to redis
+
 - 2 player, only require entire time once
 future report ideas:
   - head to head breakdown
@@ -10,15 +12,17 @@ future report ideas:
     - single player
       - vs each other player
 
+- wins in "ugly" rounds. 'ugly wins'
+
 - perf rarity
   - how many times has the line total been done ever, this match type
 
 - global time-line matrix
   lines (y), time (x)
 
-- statistics in R 
+- statistics in R
 
-- add player and location ddl to perf report
+- add player and location drop-down to perf report
 - redis pub/sub on match creation
 
 "lines won"

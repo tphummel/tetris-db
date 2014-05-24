@@ -1,3 +1,10 @@
+
+0.8.0 / 2014-05-24
+==================
+
+ * added performance-rarity report
+ * footer: reorg links
+
 0.7.1 / 2013-11-03
 ==================
   - match pub/sub:
@@ -10,7 +17,7 @@
 
 0.6.5 / 2013-09-12
 ==================
-  - reports/player-profile: 
+  - reports/player-profile:
     - use shared/player helper for loading list
     - now does "lines" and "time" collection reports
 
@@ -50,7 +57,7 @@
 
 0.4.0 / 2013-09-01
 ==================
-  - lib/rankings: 
+  - lib/rankings:
     - wrapped eff 2nd place in if count > 0 to fix warning
   - rolled a unit test harness
   - wrote tests for lib/grade, lib/rankings
