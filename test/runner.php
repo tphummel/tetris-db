@@ -17,11 +17,11 @@ $specFiles = array (
 $passCount = 0 ;
 $errors = array ( ) ;
 $fileCount = count ( $specFiles ) ;
-$testCount = 0 ; 
+$testCount = 0 ;
 
 foreach ($specFiles as $file) {
-  $path = $dir . "/specs/" . $file . ".php" ; 
-  
+  $path = $dir . "/specs/" . $file . ".php" ;
+
   include_once $path ;
 
   foreach ($tests as $test) {
@@ -41,17 +41,26 @@ echo "<div>files: $fileCount</div>" ;
 echo "<div>tests: $testCount</div>" ;
 echo "<div>pass: $passCount</div>" ;
 $failCount = count ( $errors ) ;
-echo "<div>fail: $failCount </div>" ;
-foreach ($errors as $error) {
-  
-  $errFile = $error[1]["file"] ;
-  $errLine = $error[1]["line"] ;
-  $args = $error[1]["args"] ;
-  $fn = $error[1]["function"] ; 
-  $errText = $errFile . " : " . $errLine . " : " . $fn . " : (" . implode ( $args, ", " ) . ")";
-  
-  echo "<div>$errText</div>" ;
-}
 
+if($failCount == 0) {
+  echo "pass. exit 0";
+  exit(0);
+
+}else{
+  echo "<div>fail: $failCount </div>" ;
+  foreach ($errors as $error) {
+
+    $errFile = $error[1]["file"] ;
+    $errLine = $error[1]["line"] ;
+    $args = $error[1]["args"] ;
+    $fn = $error[1]["function"] ;
+    $errText = $errFile . " : " . $errLine . " : " . $fn . " : (" . implode ( $args, ", " ) . ")";
+
+    echo "<div>$errText</div>" ;
+  }
+
+  echo "fail. exit 1";
+  exit(1);
+}
 
 ?>
