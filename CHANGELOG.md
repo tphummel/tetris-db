@@ -1,3 +1,10 @@
+
+0.8.0 / 2014-05-24
+==================
+
+ * added performance-rarity report
+ * footer: reorg links
+
 0.7.1 / 2013-11-03
 ==================
   - match pub/sub:
