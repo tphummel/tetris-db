@@ -1,26 +1,25 @@
 <?php
-use Assert\Assertion ;
-require dirname ( __FILE__ )  . "/../../lib/grade.php" ;
-
+require_once dirname ( __FILE__ )  . '/../assert.php' ;
+require_once dirname ( __FILE__ )  . "/../../lib/grade.php" ;
 
 # gradePerf ( $time, $lines )
 
 $tests = array (
   function () {
     $gradeScore = gradePerf ( 100 , 100 ) ;
-    Assertion::same ( $gradeScore, "1S-" ) ;
+    Assert::equal ( $gradeScore, "1S-" ) ;
   },
   function () {
     $gradeScore = gradePerf ( 100 , 1 ) ;
-    Assertion::same ( $gradeScore, "F" ) ;
+    Assert::equal ( $gradeScore, "F" ) ;
   },
   function () {
     $gradeScore = gradePerf ( 0 , 1 ) ;
-    Assertion::same ( $gradeScore, "F" ) ;
+    Assert::equal ( $gradeScore, "F" ) ;
   },
   function () {
     $gradeScore = gradePerf ( 20 , 60 ) ;
-    Assertion::same ( $gradeScore, "XS" ) ;
+    Assert::equal ( $gradeScore, "XS" ) ;
   }
 ) ;
 
