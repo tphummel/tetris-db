@@ -1,6 +1,6 @@
 <?php
-use Assert\Assertion ;
-require dirname ( __FILE__ )  . "/../../lib/rules.php" ;
+require_once dirname ( __FILE__ )  . '/../assert.php' ;
+require_once dirname ( __FILE__ )  . "/../../lib/rules.php" ;
 
 # 2+ players including winner must share the longest time in the match
 # if two player game and only one player has times set, set for both
@@ -15,7 +15,7 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::true ( $result [ "isValid" ] ) ;
+    Assert::ok ( $result [ "isValid" ] ) ;
   },
 
   # pass: three players
@@ -28,7 +28,7 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::true ( $result [ "isValid" ] ) ;
+    Assert::ok ( $result [ "isValid" ] ) ;
   },
 
   # pass: four players
@@ -42,9 +42,9 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::true ( $result [ "isValid" ] ) ;
+    Assert::ok ( $result [ "isValid" ] ) ;
   },
-  
+
   # fail: two winners declared
   function(){
     $fixture = array (
@@ -54,8 +54,8 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "There must be exactly one winner. 2 reported" ) ;
+    Assert::notOk ( $result [ "isValid" ] ) ;
+    Assert::equal ( $result [ "errMsg" ], "There must be exactly one winner. 2 reported" ) ;
 
   },
 
@@ -68,10 +68,10 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "A player may only appear once in a match" ) ;
+    Assert::notOk ( $result [ "isValid" ] ) ;
+    Assert::equal ( $result [ "errMsg" ] , "A player may only appear once in a match" ) ;
 
-  }, 
+  },
 
   # fail: invalid value for lines
   function(){
@@ -82,10 +82,10 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Lines value must be >= 0" ) ;
+    Assert::notOk ( $result [ "isValid" ] ) ;
+    Assert::equal ( $result [ "errMsg" ] , "Lines value must be >= 0" ) ;
 
-  }, 
+  },
 
   # fail: invalid value for minutes
   function(){
@@ -96,10 +96,10 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Minutes value must be >= 0" ) ;
+    Assert::notOk ( $result [ "isValid" ] ) ;
+    Assert::equal ( $result [ "errMsg" ] , "Minutes value must be >= 0" ) ;
 
-  }, 
+  },
 
   # fail: invalid value for seconds
   function(){
@@ -110,10 +110,10 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Seconds value must be >= 0" ) ;
+    Assert::notOk ( $result [ "isValid" ] ) ;
+    Assert::equal ( $result [ "errMsg" ] , "Seconds value must be >= 0" ) ;
 
-  }, 
+  },
 
   # fail: invalid value for total seconds (minutes*60 + seconds)
   function(){
@@ -124,10 +124,10 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Time value must be >= 0" ) ;
+    Assert::notOk ( $result [ "isValid" ] ) ;
+    Assert::equal ( $result [ "errMsg" ] , "Time value must be >= 0" ) ;
 
-  }, 
+  },
 
   # fail: winner's time was not equal to the longest in the match
   function(){
@@ -139,8 +139,8 @@ $tests = array (
 
     $result = Rules::validateMatch ( $fixture ) ;
 
-    Assertion::false ( $result [ "isValid" ] ) ;
-    Assertion::same ( $result [ "errMsg" ] , "Winner must have played the entire match" ) ;
+    Assert::notOk ( $result [ "isValid" ] ) ;
+    Assert::equal ( $result [ "errMsg" ] , "Winner must have played the entire match" ) ;
 
   }
 );
