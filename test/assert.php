@@ -13,5 +13,11 @@ Class Assert {
       throw new Exception($msg);
     }
   }
+  public static function equal ($value, $expected, $desc) {
+    if($value != $expected) {
+      $msg = 'Assert::equal failed: '.$desc. ' , value: '.$value.' , expected: '.$expected;
+      throw new Exception($msg);
+    }
+  }
 }
 ?>
