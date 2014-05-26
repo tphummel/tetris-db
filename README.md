@@ -2,6 +2,12 @@ Tetris-DB
 
 web scripts for collecting and viewing Tetris data from The New Tetris on Nintendo 64
 
+[![build status](https://secure.travis-ci.org/tphummel/tetris-db.png)](http://travis-ci.org/tphummel/tetris-db)
+
+## test
+
+    ./bin/test
+
 ### Routes/Views
 - index.php
 - match.php
