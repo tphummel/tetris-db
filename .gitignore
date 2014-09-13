@@ -5,4 +5,5 @@ python-report/
 .vagrant/
 log/
 ansible/roles/*
+ansible.secret
 !ansible/roles/.gitkeep
