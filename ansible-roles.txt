@@ -1,0 +1,4 @@
+debops.nginx
+debops.php5
+debops.mysql
+debops.redis
