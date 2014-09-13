@@ -2,5 +2,16 @@
 - name: 'tetrisdb servers'
   hosts: 'tetris-db'
   sudo: yes
+  vars:
+    ferm: False
+    tcpwrappers: False
+    php5_packages:
+      - php5-mysql
+
+  pre_tasks:
+    - apt: update_cache=yes
   roles:
-    - debops.ntp
+    - debops.nginx
+    - debops.php5
+    - debops.mysql
+    - debops.redis
