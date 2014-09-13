@@ -1,0 +1,2 @@
+[tetris-db]
+local-tnt ansible_ssh_host=44.33.33.11

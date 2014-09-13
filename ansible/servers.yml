@@ -1,0 +1,6 @@
+---
+- name: 'tetrisdb servers'
+  hosts: 'tetris-db'
+  sudo: yes
+  roles:
+    - debops.ntp

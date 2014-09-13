@@ -4,3 +4,5 @@ data/tnt*.sql
 python-report/
 .vagrant/
 log/
+ansible/roles/*
+!ansible/roles/.gitkeep
