@@ -142,6 +142,21 @@ $tests = array (
     Assert::notOk ( $result [ "isValid" ] ) ;
     Assert::equal ( $result [ "errMsg" ] , "Winner must have played the entire match" ) ;
 
+  },
+
+  # fail: winner's time was not equal to the longest in the match
+  function(){
+    // name, lines, min, sec, total_sec, win, ratio
+    $fixture = array (
+      array ( "Dan", 10, 1, 0, 60, "on", 10/60 ) ,
+      array ( "Tom", 20, 0, 59, 59, "", 20/59 ) ,
+    );
+
+    $result = Rules::validateMatch ( $fixture ) ;
+
+    Assert::notOk ( $result [ "isValid" ] ) ;
+    Assert::equal ( $result [ "errMsg" ] , "At least one player must match winner's time" ) ;
+
   }
 );
 
