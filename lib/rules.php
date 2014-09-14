@@ -13,7 +13,8 @@ class Rules {
       self::isSecondsValid ( $match ) ;
       self::isTimeValid ( $match ) ;
       self::isWinnerTimeMax ( $match ) ;
-        
+      self::isExactlyOneNonWinnerWithWinnerTime ( $match ) ;
+
     } catch ( Exception $e ) {
       $isValid = false ;
       $errMsg = $e->getMessage ( ) ;
@@ -116,7 +117,35 @@ class Rules {
         }
       }
     }
-  } 
+  }
+
+  private static function isExactlyOneNonWinnerWithWinnerTime ( $match ) {
+    $timeIx = 4 ;
+    $winnerIx = 5 ;
+    $winner = null ;
+
+    foreach ( $match as $player ) {
+      if ( $player [ $winnerIx ] === "on" ) {
+        $winner = $player ;
+      }
+    }
+
+    $nonWinnerMatches = 0 ;
+
+    foreach ( $match as $player ) {
+      if ( $player [ $winnerIx ] !== "on" ) {
+        if ( $player [ $timeIx ] === $winner [ $timeIx ]) {
+          $nonWinnerMatches ++ ;
+        }
+      }
+    }
+
+    if ( $nonWinnerMatches <= 0 ) {
+      throw new Exception ( "At least one player must match winner's time" ) ;
+    }
+
+
+  }
 }
 
 ?>
