@@ -1,5 +1,7 @@
 - output match_id and player_id to redis
 
+- clean up the project root, make a public/ dir maybe
+
 - 2 player, only require entire time once
 future report ideas:
   - head to head breakdown
@@ -54,3 +56,10 @@ future report ideas:
   - date, timestamp, order, sums
   - with delete button
   - with edit button
+
+## query endpoints
+
+player-match
+question: given a player match
+answer:
+  - percentile
