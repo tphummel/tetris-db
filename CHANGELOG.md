@@ -1,4 +1,13 @@
 
+0.9.0 / 2015-05-30
+==================
+
+  * disable match results redis publishing
+  * GET /health.php: added version to json
+  * readme: test section + travis badge
+  * travis.yml
+  * test harness + tests
+
 0.8.0 / 2014-05-24
 ==================
 
