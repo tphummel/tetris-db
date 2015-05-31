@@ -1,8 +1,11 @@
 <?php
 
-$health = array ( 
+$version = file_get_contents ( "VERSION" ) ;
+
+$health = array (
   "ts" => date ( "Y-m-d H:i:s" ) ,
-  "server" => $_SERVER [ "SERVER_ADDR" ],
+  "version" => str_replace ( "\n", "", $version ) ,
+  "server" => $_SERVER [ "SERVER_ADDR" ] ,
   "status" => "ok"
 ) ;
 
@@ -12,6 +15,6 @@ $jsonLen = mb_strlen ( $json, '8bit' );
 header ( 'Content-Type: application/json' ) ;
 header ( "Content-Length: $jsonLen" ) ;
 
-echo $json ; 
+echo $json ;
 
 ?>
