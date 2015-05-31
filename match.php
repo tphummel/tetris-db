@@ -88,7 +88,7 @@ if ( array_key_exists('action', $_GET ) ) {
 
 			foreach ( $erankedPlayers as $perf ) {
 				$perf [ 8 ] = $current ;
-			 	Redis::publishPerformance ( $perf ) ;	
+			 	// Redis::publishPerformance ( $perf ) ;
 			}
 			
 		break;
