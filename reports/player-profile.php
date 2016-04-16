@@ -14,9 +14,9 @@ if ( array_key_exists ( "player", $_GET ) ) {
   }
 
   if ( $report === "lines-collect" ) {
-    doCollect ( $playerId, "lines" ) ;  
+    printCollectionReport ( $playerId, "lines" ) ;  
   } else if ( $report === "time-collect" ) {
-    doCollect ( $playerId, "time" ) ;  
+    printCollectionReport ( $playerId, "time" ) ;  
   }
 } else {
   doForm ( ) ;
@@ -116,7 +116,7 @@ function getCompletionPct ( $data ) {
 
 }
 
-function doCollect ( $player, $mode="lines" ) {
+function printCollectionReport ( $player, $mode="lines" ) {
   require ( dirname ( __FILE__ ) . "/../config/db.php");
 
   //create connection obj
