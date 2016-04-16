@@ -4,19 +4,19 @@ $title = "Report : Player Profile";
 include_once( dirname ( __FILE__ ) . "/../templates/header.php");
 
 if ( array_key_exists ( "player", $_GET ) ) {
-  
+
   $playerId = $_GET [ "player" ] ;
-  
+
   if ( array_key_exists ( "report" , $_GET ) ) {
-    $report = $_GET [ "report" ] ;  
+    $report = $_GET [ "report" ] ;
   } else {
     $report = "lines-collect" ;
   }
 
   if ( $report === "lines-collect" ) {
-    printCollectionReport ( $playerId, "lines" ) ;  
+    printCollectionReport ( $playerId, "lines" ) ;
   } else if ( $report === "time-collect" ) {
-    printCollectionReport ( $playerId, "time" ) ;  
+    printCollectionReport ( $playerId, "time" ) ;
   }
 } else {
   doForm ( ) ;
@@ -35,7 +35,7 @@ function doForm ( ) {
         $id = $player [ "playerid" ] ;
         $name = $player [ "username"] ;
         echo '<option value="'.$id.'">'.$name.'</option>' ;
-      } 
+      }
 
       ?>
     </select>
@@ -62,7 +62,7 @@ function organizeData ( $data, $mode ) {
         $li [ "$i" ] = array (
           "count" => $row [ "ct$i" ],
           "last" => $row [ "last$i" ]
-        ) ;  
+        ) ;
       }
     }
   }
@@ -75,13 +75,13 @@ function fillBlanks ( $data ) {
 
   for ( $i = 0; $i <= 299; $i ++ ) {
     if ( empty ( $data [ "$i" ] ) ) {
-      $data [ $i ] = array ( 
+      $data [ $i ] = array (
         "2" => $empty,
-        "3" => $empty, 
+        "3" => $empty,
         "4" => $empty
       ) ;
     }
-  } 
+  }
 
   return $data ;
 }
@@ -90,21 +90,21 @@ function getCompletionPct ( $data ) {
 
   $empty = array ( "count" => 0, "possible" => 0 ) ;
 
-  $result = array ( 
-    "total" => $empty, 
+  $result = array (
+    "total" => $empty,
     "2" => $empty,
-    "3" => $empty, 
+    "3" => $empty,
     "4" => $empty
   ) ;
 
   foreach ( $data as $lines => $row ) {
-    foreach ( $row as $mode => $detail ) { 
+    foreach ( $row as $mode => $detail ) {
 
       $result [ $mode ] [ "possible" ] ++ ;
       $result [ "total" ] [ "possible" ] ++ ;
 
       if ( $detail [ "count" ] > 0 ) {
-        
+
         $result [ $mode ] [ "count" ] ++ ;
 
         $result [ "total" ] [ "count" ] ++ ;
@@ -112,7 +112,7 @@ function getCompletionPct ( $data ) {
     }
   }
 
-  return $result ; 
+  return $result ;
 
 }
 
@@ -130,29 +130,29 @@ function printCollectionReport ( $player, $mode="lines" ) {
   }
 
   $sql = "
-SELECT a.$mode, 
-       SUM(IF(a.type = 2, a.ct, 0))   AS ct2, 
-       MAX(IF(a.type = 2, a.last, 0)) AS last2, 
-       SUM(IF(a.type = 3, a.ct, 0))   AS ct3, 
-       MAX(IF(a.type = 3, a.last, 0)) AS last3, 
-       SUM(IF(a.type = 4, a.ct, 0))   AS ct4, 
-       MAX(IF(a.type = 4, a.last, 0)) AS last4 
-FROM   (SELECT p.$mode, 
-               (SELECT COUNT(playerid) 
-                FROM   playermatch 
-                WHERE  matchid = t.matchid) AS type, 
-               COUNT(p.matchid)             AS ct, 
-               MAX(t.matchdate)             AS last 
-        FROM   playermatch p, 
-               tntmatch t 
-        WHERE  t.matchid = p.matchid 
+SELECT a.$mode,
+       SUM(IF(a.type = 2, a.ct, 0))   AS ct2,
+       MAX(IF(a.type = 2, a.last, 0)) AS last2,
+       SUM(IF(a.type = 3, a.ct, 0))   AS ct3,
+       MAX(IF(a.type = 3, a.last, 0)) AS last3,
+       SUM(IF(a.type = 4, a.ct, 0))   AS ct4,
+       MAX(IF(a.type = 4, a.last, 0)) AS last4
+FROM   (SELECT p.$mode,
+               (SELECT COUNT(playerid)
+                FROM   playermatch
+                WHERE  matchid = t.matchid) AS type,
+               COUNT(p.matchid)             AS ct,
+               MAX(t.matchdate)             AS last
+        FROM   playermatch p,
+               tntmatch t
+        WHERE  t.matchid = p.matchid
                AND p.playerid = $player
                AND p.$mode < 300
-        GROUP  BY p.$mode, 
-                  (SELECT COUNT(playerid) 
-                   FROM   playermatch 
-                   WHERE  matchid = t.matchid)) a 
-GROUP  BY a.$mode 
+        GROUP  BY p.$mode,
+                  (SELECT COUNT(playerid)
+                   FROM   playermatch
+                   WHERE  matchid = t.matchid)) a
+GROUP  BY a.$mode
     " ;
 
 
@@ -196,8 +196,8 @@ GROUP  BY a.$mode
     $ct = $comp [ $matchType ] [ "count" ] ;
     $poss = $comp [ $matchType ] [ "possible" ] ;
     $pct = round ( ( $ct / $poss ) * 100, 1 ) ;
-  
-    $strs[] = "$matchType: $ct / $poss ( $pct %)" ; 
+
+    $strs[] = "$matchType: $ct / $poss ( $pct %)" ;
   }
 
   echo implode ( "; " , $strs ) ;
@@ -217,7 +217,7 @@ GROUP  BY a.$mode
     }
 
     $rowStr = "<tr>" . "<td>" . $lines . "</td>" ;
-    foreach ( $row as $mt => $detail ) { 
+    foreach ( $row as $mt => $detail ) {
       $ct = $detail [ "count" ] ;
 
       if ( $ct > 0 ) {
