@@ -19,10 +19,10 @@ if ( array_key_exists ( "player", $_GET ) ) {
     printCollectionReport ( $playerId, "time" ) ;
   }
 } else {
-  doForm ( ) ;
+  printForm ( ) ;
 }
 
-function doForm ( ) {
+function printForm ( ) {
   ?>
   <h1>Player Profile Reports</h1>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
