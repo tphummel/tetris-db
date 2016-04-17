@@ -118,6 +118,30 @@ function getCompletionPct ( $data ) {
   return $result ;
 }
 
+function getCalendarCompletionPct ( $calendar ) {
+  $result = array ( ) ;
+  foreach ( array ("total", "2", "3", "4" ) as $y ) {
+    $result [ $y ] = array ( "count" => 0, "possible" => 0 ) ;
+  }
+
+  foreach ($calendar as $month => $days) {
+    foreach ($days as $day => $counts ) {
+      foreach ($counts as $matchtype => $count) {
+
+        $result [ $matchtype ] [ "possible" ] ++ ;
+        $result [ "total" ] [ "possible" ] ++ ;
+
+        if ( $count > 0 ) {
+          $result [ $matchtype ] [ "count" ] ++ ;
+          $result [ "total" ] [ "count" ] ++ ;
+        }
+      }
+    }
+  }
+
+  return $result ;
+}
+
 function printHeader ( $player, $mode ) {
   echo '
   <style type="text/css">
@@ -232,6 +256,9 @@ function printCalendarReport ( $player ) {
   }
 
   printHeader ( $player, "calendar") ;
+
+  $completion = getCalendarCompletionPct ( $calendar ) ;
+  printCompletion ( $completion ) ;
 
   foreach ($calendar as $month => $days) {
     echo "
