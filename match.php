@@ -126,8 +126,8 @@ showConsole( $users, $connection, $confirmStr, "", "", "", "" ) ;
 ==========================================================================================
 */
 function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion, $location, $note) {
-
   $errorLocStr =  ' class="errorLocation"' ;
+
   if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
     ?>
     <div class="errortext">
@@ -153,32 +153,34 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
             <td>
               <select name="location">
               <?php
-              // get location list
-              $sel = " selected";
-              $queryLoc = "SELECT locationname FROM location";
+              $queryLoc = "
+                SELECT locationname
+                FROM   location
+              ";
               $resultLoc = mysql_query($queryLoc, $connection) or die(mysql_error());
 
-              while ($val = mysql_fetch_array($resultLoc)) {
-                $name = $val["locationname"];
-                echo('<option value="' . $name .'"');
-                if (!empty($location)) {
-                  //if not first match of session, use location of last match.
-                  if ($name == $location) {
+              if (!empty($location)) {
+                $selectedLocName = $location ;
+              } else {
+                $queryLastLocation = "
+                  SELECT l.locationname
+                  FROM   location l,
+                       tntmatch tm
+                  WHERE  tm.location = l.locationid
+                       AND tm.matchid = (SELECT MAX(matchid)
+                                         FROM   tntmatch)
+                ";
+                $lastLocResult = mysql_query($queryLastLocation, $connection) or die(mysql_error());
+                $lastLoc = mysql_fetch_array($lastLocResult);
+                $selectedLocName = $lastLoc[ "locationname" ];
+              }
 
-                    echo $sel;
-                  }
-                } else {
-                  //if first match of session, get last used location.
-                  $queryLastLocation = "SELECT l.locationname FROM location l, tntmatch tm where tm.location = l.locationid and tm.matchid =    (SELECT max(matchid) from tntmatch)";
-                  $lastLocResult = mysql_query($queryLastLocation, $connection) or die(mysql_error());
-                  $lastLocArr = mysql_fetch_array($lastLocResult);
-                  $lastLoc = $lastLocArr[0];
-                  if ($name == $lastLoc) {
-                    echo $sel;
-                  }
-                }
 
-                echo ('>' . $name . '</option>');
+              while ($loc = mysql_fetch_array($resultLoc)) {
+                $locName = $loc [ "locationname" ] ;
+                ?>
+                <option value="<?=$locName?>" <?=($selectedLocName === $locName ? "selected" : "")?>><?= $locName ?></option>
+                <?php
               }
               ?>
               </select></td></tr>
