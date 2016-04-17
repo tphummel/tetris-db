@@ -3,14 +3,14 @@
 </td>
 
 <tr><td valign="top">
-	<table>
+  <table>
 
-			<td>
-			Match:
-			<table>
-			<tr><td><a href="/match.php">Add New</a></td></tr>
-			</table>
-			</td>
+      <td>
+      Match:
+      <table>
+      <tr><td><a href="/match.php">Add New</a></td></tr>
+      </table>
+      </td>
 
 <tr><td></td></tr>
 
@@ -28,10 +28,10 @@ Reports:
 
 <tr><td></td></tr>
 
-				</table>
-			</td>
-		</tr>
-	</table>
+        </table>
+      </td>
+    </tr>
+  </table>
 </td>
 </tr>
 <tr><td align="center" colspan="2">Copyright 2007 <a href="https://tomhummel.com">Tom Hummel</a></td></tr></table>

@@ -1,4 +1,4 @@
-<?php 
+<?php
 $title  = "Reports : Player Day Summaries";
 include_once "templates/header.php" ;
 
@@ -13,10 +13,10 @@ $db_select = mysql_select_db($db_database, $connection);
 if (!$db_select){
     die ("Could not select the database: <br />". mysql_error());
 }
-		
-		
+
+
 if (isset($_GET["playerid"])){
-	$player = $_GET["playerid"];
+  $player = $_GET["playerid"];
 }
 
 
@@ -48,11 +48,11 @@ $last = $playerdata["lastname"];
 </tr>
 
 <?php
-$select2 = "SELECT m.matchdate, count(pm.matchid) as games, 
+$select2 = "SELECT m.matchdate, count(pm.matchid) as games,
 sum(pm.lines) as li, sum(pm.time) as ti, sum(pm.lines)/sum(pm.time) as lps, sum(pm.lines)/count(*) as lpg
 FROM playermatch pm, tntmatch m
 WHERE pm.playerid = " . $player . "
-and m.matchid = pm.matchid 
+and m.matchid = pm.matchid
 GROUP BY m.matchdate
 ORDER BY m.matchdate DESC";
 
@@ -60,21 +60,21 @@ $result2 = mysql_query($select2, $connection) or die(mysql_error());
 
 while($row = mysql_fetch_array($result2))
 {
-	$date = $row["matchdate"];
-	$games = $row["games"];
-	$time = $row["ti"];
-	$lines = $row["li"];
-	$lps = $row["lps"];
-	$lpg = $row["lpg"];
-	$rowArr = array($date, $games, $time, $lines, $lps, $lpg);
-	
-	echo '<tr>';
-	foreach ($rowArr as $ra)
-	{
-		echo '<td class="data">' . $ra . '</td>';
-	}
-	echo '</tr>';
-	
+  $date = $row["matchdate"];
+  $games = $row["games"];
+  $time = $row["ti"];
+  $lines = $row["li"];
+  $lps = $row["lps"];
+  $lpg = $row["lpg"];
+  $rowArr = array($date, $games, $time, $lines, $lps, $lpg);
+
+  echo '<tr>';
+  foreach ($rowArr as $ra)
+  {
+    echo '<td class="data">' . $ra . '</td>';
+  }
+  echo '</tr>';
+
 }
 
 ?>
@@ -82,6 +82,6 @@ while($row = mysql_fetch_array($result2))
 </div>
 <?php
 
-	
+
 include_once "templates/footer.php";
 ?>

@@ -8,13 +8,13 @@ class DB {
     if ( !$connection ) {
       die ( "Could not connect to the database: <br />". mysql_error ( ) ) ;
     }
-    
+
     $db_select = mysql_select_db ( $db_database, $connection );
     if ( !$db_select ) {
       die ( "Could not select the database: <br />". mysql_error ( ) ) ;
     }
-  
-    return $connection ; 
+
+    return $connection ;
   }
 
   public static function sqlToArray ( $sql ) {

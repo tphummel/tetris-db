@@ -17,8 +17,8 @@ class Redis {
   }
 
   public static function stringifyPerformance ( $perf ) {
-    $arrayMap = array ( 
-      0 => "name", 
+    $arrayMap = array (
+      0 => "name",
       1 => "lines",
       4 => "time",
       5 => "wrank",

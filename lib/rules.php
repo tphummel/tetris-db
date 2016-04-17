@@ -21,7 +21,7 @@ class Rules {
     }
 
     return compact ( "isValid", "errMsg" ) ;
-    
+
   }
 
   private static function isExactlyOneWinner ( $match ) {

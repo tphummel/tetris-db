@@ -48,20 +48,20 @@ class Helper {
     $player [ 3 ] = $seconds ;
 
     if (array_key_exists ( 4, $player ) ) {
-      $isWinner = $player [ 4 ] ;  
+      $isWinner = $player [ 4 ] ;
     }
     if ( empty ( $isWinner ) ) { $isWinner = "" ; }
-    $player [ 5 ] = $isWinner ; 
+    $player [ 5 ] = $isWinner ;
 
-    $totalSeconds = $minutes * 60 + $seconds ; 
+    $totalSeconds = $minutes * 60 + $seconds ;
     $player [ 4 ] = $totalSeconds ;
 
-    if ( $totalSeconds > 0 ) { 
+    if ( $totalSeconds > 0 ) {
       $ratio = $lines / $totalSeconds ;
     }else{
       $ratio = 0 ;
     }
-    $player [ 6 ] = $ratio ; 
+    $player [ 6 ] = $ratio ;
 
     return $player ;
 
@@ -73,7 +73,7 @@ class Helper {
     foreach ( $players as &$player ) {
       $player = self::cleanPlayer ( $player ) ;
     }
-    return array_filter ( $players ) ; 
+    return array_filter ( $players ) ;
   }
 
   public static function matchToString ( $players, $location ) {
@@ -82,9 +82,9 @@ class Helper {
     $values[] = $location ;
 
     foreach ( $players as $player ) {
-      array_push ( $values , 
+      array_push ( $values ,
         $player [ 0 ] , $player [ 1 ] , $player [ 4 ] , $player [ 5 ]
-      ) ; 
+      ) ;
 
     }
 
