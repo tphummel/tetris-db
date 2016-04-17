@@ -113,6 +113,32 @@ function getCompletionPct ( $data ) {
   }
 
   return $result ;
+}
+
+function printHeader ( $player, $mode ) {
+  echo '
+  <style type="text/css">
+    .table-container table { border-left: 1px solid black ;}
+    .table-container {
+      margin: 0 auto;
+      float: left;
+      font-family: monospace;
+      padding: 10px;
+    }
+    .owned { background: green; }
+    .unowned { background: red ; }
+  </style>' ;
+
+  echo "<h3>Player Collection Report - $mode</h3>" ;
+
+  require ( dirname ( __FILE__ ) . "/shared/player.php");
+  $playerData = Player::getPlayer ( $player ) ;
+
+  echo "<h4>Player: "
+    . $playerData["firstname"]
+    . " " . $playerData["lastname"]
+    . "</h4>";
+}
 
 }
 
@@ -155,15 +181,6 @@ FROM   (SELECT p.$mode,
 GROUP  BY a.$mode
     " ;
 
-
-  echo '
-  <style type="text/css">
-    .table-container table { border-left: 1px solid black ;}
-    .table-container { margin: 0 auto; float: left; font-family: monospace; }
-    .owned { background: green; }
-    .unowned { background: red ; }
-  </style>' ;
-
   $result = mysql_query($sql, $connection) or die(mysql_error());
 
   $organized = organizeData ( $result, $mode ) ;
@@ -176,18 +193,7 @@ GROUP  BY a.$mode
   $rowsPerTable = 30 ;
   $tables = array ( ) ;
 
-  echo "<h3>Player Collection Report - $mode</h3>" ;
-
-  require ( dirname ( __FILE__ ) . "/shared/player.php");
-  $playerData = Player::getPlayer ( $player ) ;
-
-  ?>
-
-
-  <h4>Player: <?= $playerData["firstname"]. ' ' . $playerData["lastname"] ?></h4>
-
-  <?php
-
+  printHeader ( $player, $mode ) ;
   echo "<h4>" ;
 
   $strs = array ( ) ;
