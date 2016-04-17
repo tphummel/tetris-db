@@ -208,11 +208,9 @@ function printCalendarReport ( $player ) {
   $calendar = getEmptyCalendar ( ) ;
 
   while ( $row = mysql_fetch_array ( $result, MYSQL_ASSOC ) ) {
-
-    $calendar [ $row [ "mon"] ][ $row ["day"] ] ["2"]  = $row ["ct2"] ;
-    $calendar [ $row [ "mon"] ][ $row ["day"] ] ["3"]  = $row ["ct3"] ;
-    $calendar [ $row [ "mon"] ][ $row ["day"] ] ["4"]  = $row ["ct4"] ;
-
+    foreach ( array ( "2", "3", "4") as $i ) {
+      $calendar [ $row [ "mon"] ][ $row ["day"] ] [ "$i" ]  = $row [ "ct$i" ] ;
+    }
   }
 
   printHeader ( $player, "calendar") ;
