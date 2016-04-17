@@ -90,7 +90,6 @@ function fillBlanks ( $data ) {
 }
 
 function getCompletionPct ( $data ) {
-
   $empty = array ( "count" => 0, "possible" => 0 ) ;
 
   $result = array (
@@ -102,14 +101,11 @@ function getCompletionPct ( $data ) {
 
   foreach ( $data as $lines => $row ) {
     foreach ( $row as $mode => $detail ) {
-
       $result [ $mode ] [ "possible" ] ++ ;
       $result [ "total" ] [ "possible" ] ++ ;
 
       if ( $detail [ "count" ] > 0 ) {
-
         $result [ $mode ] [ "count" ] ++ ;
-
         $result [ "total" ] [ "count" ] ++ ;
       }
     }
