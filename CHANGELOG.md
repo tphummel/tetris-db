@@ -1,4 +1,12 @@
 
+0.10.0 / 2016-04-17
+==================
+
+  * Merge pull request #7 from tphummel/https-footer-link
+  * Merge pull request #6 from tphummel/calendar-collection
+  * travis: add php 5.6 to build matrix
+  * remove data/ directory
+
 0.9.0 / 2015-05-30
 ==================
 
