@@ -34,7 +34,7 @@ Reports:
 	</table>
 </td>
 </tr>
-<tr><td align="center" colspan="2">Copyright 2007 <a href="http://www.tomhummel.com">Tom Hummel</a></td></tr></table>
+<tr><td align="center" colspan="2">Copyright 2007 <a href="https://tomhummel.com">Tom Hummel</a></td></tr></table>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
