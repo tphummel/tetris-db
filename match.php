@@ -157,28 +157,23 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
               $sel = " selected";
               $queryLoc = "SELECT locationname FROM location";
               $resultLoc = mysql_query($queryLoc, $connection) or die(mysql_error());
-              while ($val = mysql_fetch_array($resultLoc))
-              {
+
+              while ($val = mysql_fetch_array($resultLoc)) {
                 $name = $val["locationname"];
                 echo('<option value="' . $name .'"');
-                if(!empty($location))
-                {
+                if (!empty($location)) {
                   //if not first match of session, use location of last match.
-                  if ($name == $location)
-                  {
+                  if ($name == $location) {
 
                     echo $sel;
                   }
-                }
-                else
-                {
+                } else {
                   //if first match of session, get last used location.
                   $queryLastLocation = "SELECT l.locationname FROM location l, tntmatch tm where tm.location = l.locationid and tm.matchid =    (SELECT max(matchid) from tntmatch)";
                   $lastLocResult = mysql_query($queryLastLocation, $connection) or die(mysql_error());
                   $lastLocArr = mysql_fetch_array($lastLocResult);
                   $lastLoc = $lastLocArr[0];
-                  if($name == $lastLoc)
-                  {
+                  if ($name == $lastLoc) {
                     echo $sel;
                   }
                 }
@@ -200,13 +195,11 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
     $query = "SELECT username from player";
     $result = mysql_query($query, $connection) or die(mysql_error());
     //query DB once for name list and then put in array
-    while ($row = mysql_fetch_array($result))
-    {
+    while ($row = mysql_fetch_array($result)) {
       $names[] = $row['username'];
     }
-    //var_dump($names);
-    for ($i = 0; $i <= 3; $i++) //do 4 times, one for each player
-    {
+
+    for ($i = 0; $i <= 3; $i++) { //do 4 times, one for each player
     ?>
       <td><table>
       <tr><td>Username:</td>
@@ -214,8 +207,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
       <!-- USERNAME DROP DOWN LIST -->
       <select name="player<?php echo $i+1; ?>[]"
       <?php
-      if($errorRegion == 1 + (4*$i) or $errorRegion == 17 or $errorRegion == 21 + $i)
-      {
+      if($errorRegion == 1 + (4*$i) or $errorRegion == 17 or $errorRegion == 21 + $i) {
         echo $errorLocStr;
       }
       ?>
@@ -224,14 +216,12 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
         <?php
         $query = "SELECT username from player";
         $result = mysql_query($query, $connection) or die(mysql_error());
-        foreach ($names as $name)
-        {
+        foreach ($names as $name) {
         ?>
           <option value="<?php echo $name; ?>"
           <?php
-          if(array_key_exists($i, $users)){
-            if ($users[$i][0] == $name)
-            {
+          if (array_key_exists($i, $users)){
+            if ($users[$i][0] == $name) {
               echo $selected;
             }
           }
@@ -244,48 +234,37 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
         <tr><td>Lines:</td><td><input type="text" size="4" maxlength="4" name="player<?php echo $i+1; ?>[]" value="
         <?php
           //only show last round's values if there is an error and a value exists
-          if(!empty($users[$i][1]) AND !empty($errorMsg))
-          {
+          if(!empty($users[$i][1]) AND !empty($errorMsg)) {
             echo $users[$i][1];
-          }
-          else
-          {
+          } else {
             echo "";
           }
         ?>"
         <?php
-          if($errorRegion == 2 + (4*$i) or $errorRegion == 18 or $errorRegion == 21 + $i)
-          {
+          if($errorRegion == 2 + (4*$i) or $errorRegion == 18 or $errorRegion == 21 + $i) {
             echo $errorLocStr;
           }
         ?>
         ></td></tr>
         <tr><td>Minutes:</td><td><input type="text" size="4" maxlength="4" name="player<?php echo $i+1; ?>[]" value="
         <?php
-          if(!empty($users[$i][2]) AND !empty($errorMsg))
-          {
+          if(!empty($users[$i][2]) AND !empty($errorMsg)) {
             echo $users[$i][2];
-          }
-          else
-          {
+          } else {
             echo "";
           }
         ?>"
         <?php
-          if($errorRegion == 3 + (4*$i) or $errorRegion == 19 or $errorRegion == 21 + $i or ($errorRegion == 25 and $i < 2) )
-          {
+          if($errorRegion == 3 + (4*$i) or $errorRegion == 19 or $errorRegion == 21 + $i or ($errorRegion == 25 and $i < 2) ) {
             echo $errorLocStr;
           }
         ?>
         ></td></tr>
         <tr><td>Seconds:</td><td><input type="text" size="4" maxlength="4" name="player<?php echo $i+1; ?>[]" value="
         <?php
-          if(!empty($users[$i][3]) AND !empty($errorMsg))
-          {
+          if (!empty($users[$i][3]) AND !empty($errorMsg)) {
             echo $users[$i][3];
-          }
-          else
-          {
+          } else {
             echo "";
           }
         ?>"
@@ -334,8 +313,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
           <tr>
             <td align="center">
             <?php
-              if(!empty($confirmStr))
-              {
+              if (!empty($confirmStr)) {
                 echo $confirmStr;
               }
             ?></td>
@@ -345,8 +323,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
               <?php
                 //show edit button only if there is a last match
                 // 12/10/10 - doesn't hide button
-                if(!empty($users))
-                {
+                if (!empty($users)) {
                 ?>
                   <form>
                     <input type="submit" value="Edit" disabled>
@@ -360,14 +337,12 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
       </td>
 
     <?php
-    for ($j = 0; $j <= 3; $j++) //do 4 times, one for each player
-    {
+    for ($j = 0; $j <= 3; $j++) { //do 4 times, one for each player
     ?>
     <td valign="middle">
     <?php
     // LAST MATCH
-    if (isset($users[$j][0]) && $users[$j][0] != "VACANT")
-    {
+    if (isset($users[$j][0]) && $users[$j][0] != "VACANT") {
       // hideous finding last match by max(matchid)
       $query = "select pm.lines, pm.time, pm.wrank, pm.erank,
 (select count(playerid) from playermatch where matchid = pm.matchid) as pCt
@@ -389,9 +364,9 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
       $time = $data["time"];
       $min = intval($time/60);
       $sec = str_pad($time - $min*60,2,"0", STR_PAD_LEFT);
-      if($time != 0){
+      if ($time != 0) {
         $eff = $lines/$time;
-      }else{
+      } else {
         $eff = 0;
       }
 
@@ -442,8 +417,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
           <td>
             <?php
                 //show edit button only if there is day match data
-                if(!empty($users))
-                {
+                if (!empty($users)) {
                 ?>
                   <form>
                     <input type="submit" value="Edit" disabled>
@@ -457,16 +431,14 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
     </td>
 
     <?php
-    for ($k = 0; $k <= 3; $k++) //do 4 times, one for each player
-    {
+    for ($k = 0; $k <= 3; $k++) { //do 4 times, one for each player
       echo '<td valign="middle">';
     ?>
 
     <?php
     //query for day sum
 
-    if (isset($users[$k][0]) && $users[$k][0] != "VACANT")
-    {
+    if (isset($users[$k][0]) && $users[$k][0] != "VACANT") {
       $query =
       "SELECT count(today.mid) as totgames, sum(today.time) as tottime, sum(today.score) as totlines
       FROM (SELECT m.matchid as mid, p.username as name, pm.lines as score, pm.time as time
@@ -509,8 +481,7 @@ where pm.matchid = m.matchid
       $epts = 0;
       $wpts = 0;
       // why dont just sum in db query? looks like i'm getting win pts here, only reason.
-      while ($rec = mysql_fetch_array($resultDaySum))
-        {
+      while ($rec = mysql_fetch_array($resultDaySum)) {
         $pCount = $rec["pCt"];
         $win = $rec["wrank"];
         $pts1 = rankToPts($win, $pCount); //udf for getting pts
