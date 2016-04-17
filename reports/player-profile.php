@@ -17,6 +17,8 @@ if ( array_key_exists ( "player", $_GET ) ) {
     printCollectionReport ( $playerId, "lines" ) ;
   } else if ( $report === "time-collect" ) {
     printCollectionReport ( $playerId, "time" ) ;
+  } else if ( $report === "calendar-collect" ) {
+    printCalendarReport ( $playerId ) ;
   }
 } else {
   printForm ( ) ;
@@ -43,6 +45,7 @@ function printForm ( ) {
     <select name="report">
       <option value="lines-collect">Lines Collection</option>
       <option value="time-collect">Time Collection</option>
+      <option value="calendar-collect">Calendar Collection</option>
     </select>
     <input type="submit" value="submit">
     </form>
@@ -140,6 +143,108 @@ function printHeader ( $player, $mode ) {
     . "</h4>";
 }
 
+function getEmptyCalendar ( ) {
+  $dates = array ( ) ;
+
+  // 2016 is a leap year, so we'll get feb 29
+  $start = "2016-01-01" ;
+  $end = "2016-12-31" ;
+  $current = strtotime ( $start ) ;
+  $end = strtotime ( $end ) ;
+
+  while ( $current <= $end ) {
+    $mon = date ( "n", $current ) ;
+    $day = date ( "j", $current ) ;
+
+    if ( array_key_exists ( $mon , $dates ) === false ) {
+      $dates [ $mon ] = array ( ) ;
+    }
+
+    if ( array_key_exists ( $day , $dates [ $mon ] ) === false ) {
+      $dates [ $mon ] [ $day ] = array (
+        "2" => 0,
+        "3" => 0,
+        "4" => 0
+      ) ;
+    }
+
+    $current = strtotime ( "+1 day", $current ) ;
+  }
+
+  return $dates ;
+}
+
+function printCalendarReport ( $player ) {
+  require ( dirname ( __FILE__ ) . "/../config/db.php");
+
+  $connection = mysql_connect($db_host, $db_username, $db_password);
+  if(!$connection){
+    die ("Could not connect to the database: <br />". mysql_error());
+  }
+  $db_select = mysql_select_db($db_database, $connection);
+  if (!$db_select){
+    die ("Could not select the database: <br />". mysql_error());
+  }
+
+  $sql = "
+    SELECT MONTH(matchdate)          AS mon,
+           DAYOFMONTH(matchdate)     AS day,
+           SUM(IF(a.type = 2, 1, 0)) AS ct2,
+           SUM(IF(a.type = 3, 1, 0)) AS ct3,
+           SUM(IF(a.type = 4, 1, 0)) AS ct4
+    FROM   (SELECT t.matchdate,
+                   (SELECT COUNT(playerid)
+                    FROM   playermatch
+                    WHERE  matchid = p.matchid) AS type,
+                   p.*
+            FROM   tntmatch t,
+                   playermatch p
+            WHERE  p.matchid = t.matchid
+                   AND p.playerid = $player) a
+    GROUP  BY mon, day" ;
+
+  $result = mysql_query($sql, $connection) or die(mysql_error());
+
+  $calendar = getEmptyCalendar ( ) ;
+
+  while ( $row = mysql_fetch_array ( $result, MYSQL_ASSOC ) ) {
+
+    $calendar [ $row [ "mon"] ][ $row ["day"] ] ["2"]  = $row ["ct2"] ;
+    $calendar [ $row [ "mon"] ][ $row ["day"] ] ["3"]  = $row ["ct3"] ;
+    $calendar [ $row [ "mon"] ][ $row ["day"] ] ["4"]  = $row ["ct4"] ;
+
+  }
+
+  printHeader ( $player, "calendar") ;
+
+  foreach ($calendar as $month => $days) {
+    echo "
+      <div class=table-container>
+        <table>
+          <thead>
+            <caption>$month</caption>
+          </thead>
+          <tbody>
+            <tr><th>Day</th><th>2P</th><th>3P</th><th>4P</th></tr>" ;
+
+    foreach ($days as $day => $counts ) {
+      echo "
+        <tr>
+          <td>$day</td>" ;
+
+      foreach ($counts as $matchtype => $count) {
+        if ( $count > 0 ) {
+          $tdclass = "class=owned" ;
+        } else {
+          $tdclass = "class=unowned";
+        }
+
+        echo "<td $tdclass>$count</td>" ;
+      }
+      echo "</tr>" ;
+    }
+    echo "</tbody></table></div>" ;
+  }
 }
 
 function printCollectionReport ( $player, $mode="lines" ) {
