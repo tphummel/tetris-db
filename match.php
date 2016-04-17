@@ -39,61 +39,61 @@ if ( array_key_exists ( 'player1', $_POST ) ) {
 }
 $confirmStr = '';
 
-if ( array_key_exists('action', $_GET ) ) {
+if ( array_key_exists('action', $_GET ) && $_GET['action'] === 'add' ) {
+	$matchToSave = true;
+} else {
+	$matchToSave = false ;
+}
 
-  switch ($_GET['action']) {
-    case "add" :
+if ( $matchToSave ) {
 
-      $valid = Rules::validateMatch ( $players ) ;
+  $valid = Rules::validateMatch ( $players ) ;
 
-      //reshow form with highlights if error is caught
-      if( $valid [ "isValid" ] == false ) {
-        $errorRegion = true ;
-        showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
-        exit();
-      }
+  //reshow form with highlights if error is caught
+  if( $valid [ "isValid" ] == false ) {
+    $errorRegion = true ;
+    showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
+    exit();
+  }
 
-      Helper::logMatch ( $players, $location ) ;
+  Helper::logMatch ( $players, $location ) ;
 
-      $wrankedPlayers = Rankings::setWinRanks ( $players ) ;
-      $erankedPlayers = Rankings::setEffRanks ( $wrankedPlayers ) ;
+  $wrankedPlayers = Rankings::setWinRanks ( $players ) ;
+  $erankedPlayers = Rankings::setEffRanks ( $wrankedPlayers ) ;
 
-      //Create TNTMatch Record
+  //Create TNTMatch Record
 
-      $nowdate = date ( "Y-m-d" ) ;
-      $nowstamp = date ( "Y-m-d H:i:s" ) ;
+  $nowdate = date ( "Y-m-d" ) ;
+  $nowstamp = date ( "Y-m-d H:i:s" ) ;
 
-      $insertTM = "
-        INSERT INTO tntmatch VALUES
-        (NULL, '" . $nowdate . "', '" . $nowstamp . "', 4,
-          (SELECT locationid from location where locationname = '" . $location . "'),
-        '" . $note . "', 1)" ;
+  $insertTM = "
+    INSERT INTO tntmatch VALUES
+    (NULL, '" . $nowdate . "', '" . $nowstamp . "', 4,
+      (SELECT locationid from location where locationname = '" . $location . "'),
+    '" . $note . "', 1)" ;
 
-      mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
+  mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
 
-      //Create PlayerMatch Records
-      $current = mysql_insert_id ( ) ;
+  //Create PlayerMatch Records
+  $current = mysql_insert_id ( ) ;
 
-      $insertPM = "INSERT INTO playermatch VALUES ";
-      foreach ( $erankedPlayers as $player ) {
-        $insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
-                          $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), ";
+  $insertPM = "INSERT INTO playermatch VALUES ";
+  foreach ( $erankedPlayers as $player ) {
+    $insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
+                      $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), ";
 
-      }
-      $insertPM_trimmed = rtrim($insertPM, ", ");
+  }
+  $insertPM_trimmed = rtrim($insertPM, ", ");
 
-      $confirmStr = "Match #" . $current . "<br>" . $nowstamp;
+  $confirmStr = "Match #" . $current . "<br>" . $nowstamp;
 
-      mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
+  mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
 
-      foreach ( $erankedPlayers as $perf ) {
-        $perf [ 8 ] = $current ;
-         // Redis::publishPerformance ( $perf ) ;
-      }
-
-    break;
-  } // END SWITCHCASE ADD
-} // END check array_key_exists('action',$_GET)
+  foreach ( $erankedPlayers as $perf ) {
+    $perf [ 8 ] = $current ;
+     // Redis::publishPerformance ( $perf ) ;
+  }
+}
 
 //this happens on every load
 //clear post data for start of new match
