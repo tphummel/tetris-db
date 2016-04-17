@@ -174,6 +174,24 @@ function getEmptyCalendar ( ) {
   return $dates ;
 }
 
+function printCompletion ( $rawCompletions ) {
+  echo "<h4>" ;
+
+  $strs = array ( ) ;
+
+  foreach ( array ( "total", "2", "3", "4") as $matchType ) {
+    $ct = $rawCompletions [ $matchType ] [ "count" ] ;
+    $poss = $rawCompletions [ $matchType ] [ "possible" ] ;
+    $pct = round ( ( $ct / $poss ) * 100, 1 ) ;
+
+    $strs[] = "$matchType: $ct / $poss ( $pct %)" ;
+  }
+
+  echo implode ( "; " , $strs ) ;
+
+  echo "</h4>" ;
+}
+
 function printCalendarReport ( $player ) {
   require ( dirname ( __FILE__ ) . "/../config/db.php");
 
@@ -297,22 +315,8 @@ GROUP  BY a.$mode
   $tables = array ( ) ;
 
   printHeader ( $player, $mode ) ;
-  echo "<h4>" ;
 
-  $strs = array ( ) ;
-
-  foreach ( array ( "total", "2", "3", "4") as $matchType ) {
-    $ct = $comp [ $matchType ] [ "count" ] ;
-    $poss = $comp [ $matchType ] [ "possible" ] ;
-    $pct = round ( ( $ct / $poss ) * 100, 1 ) ;
-
-    $strs[] = "$matchType: $ct / $poss ( $pct %)" ;
-  }
-
-  echo implode ( "; " , $strs ) ;
-
-  echo "</h4>" ;
-
+  printCompletion ( $comp ) ;
 
   $tableHeader = "<div class=table-container><table><tbody><tr><th>$mode</th><th>2P</th><th>3P</th><th>4P</th>" ;
   $tableFoot = "</tbody></table></div>" ;
