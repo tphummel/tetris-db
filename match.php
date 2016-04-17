@@ -1,15 +1,15 @@
 <?php
 
 $title = "The New Tetris - Match Console" ;
-require_once ( "templates/header.php" ) ;
+require_once ( __DIR__ . "/templates/header.php" ) ;
 
-require_once ( "config/db.php" ) ;
-require_once ( "lib/grade.php" ) ;
-require_once ( "lib/points.inc.php" ) ;
-require_once ( "lib/rankings.php" ) ;
-require_once ( "lib/rules.php" ) ;
-require_once ( "lib/statPower.php" ) ;
-require_once ( "lib/redis.php" ) ;
+require_once ( __DIR__ . "/config/db.php" ) ;
+require_once ( __DIR__ . "/lib/grade.php" ) ;
+require_once ( __DIR__ . "/lib/points.inc.php" ) ;
+require_once ( __DIR__ . "/lib/rankings.php" ) ;
+require_once ( __DIR__ . "/lib/rules.php" ) ;
+require_once ( __DIR__ . "/lib/statPower.php" ) ;
+require_once ( __DIR__ . "/lib/redis.php" ) ;
 
 $connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
 if ( !$connection ) {
@@ -21,7 +21,7 @@ if ( !$db_select ) {
   die ( "Could not select the database: <br />". mysql_error ( ) );
 }
 
-require_once dirname ( __FILE__ )  . "/lib/helper.php" ;
+require_once ( __DIR__  . "/lib/helper.php" ) ;
 
 if ( array_key_exists ( 'player1', $_POST ) ) {
   unset ( $players ) ;
@@ -552,7 +552,7 @@ where pm.matchid = m.matchid
 
 
   <?php
-  include_once("templates/footer.php");
+  include_once( __DIR__ . "/templates/footer.php");
   ?>
   </body>
   </html>
