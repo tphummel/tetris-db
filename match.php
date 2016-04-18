@@ -192,9 +192,10 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
         </table>
       </td>
     <?php
-    $selected = " selected";
-
-    $query = "SELECT username from player";
+    $query = "
+      SELECT username
+      FROM   player
+    ";
     $result = mysql_query($query, $connection) or die(mysql_error());
     //query DB once for name list and then put in array
     while ($row = mysql_fetch_array($result)) {
@@ -202,34 +203,26 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
     }
 
     for ($i = 0; $i <= 3; $i++) { //do 4 times, one for each player
+      $playerHasError = false;
+      if($errorRegion == 1 + (4*$i) or $errorRegion == 17 or $errorRegion == 21 + $i) {
+        $playerHasError = true;
+      }
     ?>
       <td><table>
       <tr><td>Username:</td>
       <td>
       <!-- USERNAME DROP DOWN LIST -->
-      <select name="player<?php echo $i+1; ?>[]"
-      <?php
-      if($errorRegion == 1 + (4*$i) or $errorRegion == 17 or $errorRegion == 21 + $i) {
-        echo $errorLocStr;
-      }
-      ?>
-      >
-      <option value="VACANT">VACANT</option>
+      <select name="player<?= $i+1 ?>[]" <?= ($playerHasError ? $errorLocStr : "") ?>>
+        <option value="VACANT">VACANT</option>
         <?php
-        $query = "SELECT username from player";
-        $result = mysql_query($query, $connection) or die(mysql_error());
         foreach ($names as $name) {
-        ?>
-          <option value="<?php echo $name; ?>"
-          <?php
-          if (array_key_exists($i, $users)){
-            if ($users[$i][0] == $name) {
-              echo $selected;
-            }
+          $userIsSelected = false;
+          if (array_key_exists($i, $users) && $users[$i][0] == $name) {
+            $userIsSelected = true;
           }
           ?>
-          ><?php echo $name; ?></option>
-        <?php
+          <option value="<?= $name ?>" <?= ($userIsSelected ? " selected" : "")?>><?= $name ?></option>
+          <?php
         }
         ?>
         </select></td></tr>
