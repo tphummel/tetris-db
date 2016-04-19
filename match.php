@@ -224,19 +224,33 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
             <?php
           }
           ?>
-          <?php
+        </select>
+      </td></tr>
+      <?php
+        // ternary trick: http://bit.ly/1MEMf5A
+        $prevRoundPlayerLines = $users[$i][1] ?: "";
+
+        $linesHasError = false;
+        if($errorRegion == 2 + (4*$i)
+          or $errorRegion == 18
+          or $errorRegion == 21 + $i
+        ) {
+          $LinesHasError = true;
         }
-        ?>
-        </select></td></tr>
-        <tr><td>Lines:</td><td><input type="text" size="4" maxlength="4" name="player<?php echo $i+1; ?>[]" value="
-        <?php
-          //only show last round's values if there is an error and a value exists
-          if(!empty($users[$i][1]) AND !empty($errorMsg)) {
-            echo $users[$i][1];
-          } else {
-            echo "";
-          }
-        ?>"
+      ?>
+      <tr>
+        <td>Lines:</td>
+        <td>
+          <input
+            type="text"
+            size="4"
+            maxlength="4"
+            name="player<?= $i+1 ?>[]"
+            value="<?= $prevRoundPlayerLines ?>"
+            <?= ($playerHasError ? $errorLocStr : "") ?>
+          \>
+        </td>
+      </tr>
         <?php
           if($errorRegion == 2 + (4*$i) or $errorRegion == 18 or $errorRegion == 21 + $i) {
             echo $errorLocStr;
