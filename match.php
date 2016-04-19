@@ -211,17 +211,19 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
       <td><table>
       <tr><td>Username:</td>
       <td>
-      <!-- USERNAME DROP DOWN LIST -->
-      <select name="player<?= $i+1 ?>[]" <?= ($playerHasError ? $errorLocStr : "") ?>>
-        <option value="VACANT">VACANT</option>
-        <?php
-        foreach ($names as $name) {
-          $userIsSelected = false;
-          if (array_key_exists($i, $users) && $users[$i][0] == $name) {
-            $userIsSelected = true;
+        <select name="player<?= $i+1 ?>[]" <?= ($playerHasError ? $errorLocStr : "") ?>>
+          <option value="VACANT">VACANT</option>
+          <?php
+          foreach ($names as $name) {
+            $userIsSelected = false;
+            if (array_key_exists($i, $users) && $users[$i][0] == $name) {
+              $userIsSelected = true;
+            }
+            ?>
+            <option value="<?= $name ?>" <?= ($userIsSelected ? " selected" : "")?>><?= $name ?></option>
+            <?php
           }
           ?>
-          <option value="<?= $name ?>" <?= ($userIsSelected ? " selected" : "")?>><?= $name ?></option>
           <?php
         }
         ?>
