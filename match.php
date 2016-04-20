@@ -233,8 +233,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
         </select>
       </td></tr>
       <?php
-        // ternary trick: http://bit.ly/1MEMf5A
-        $prevRoundPlayerLines = $users[$i][1] ?: "";
+        $existingPlayerLines = empty($errorMsg) ? "" : $users[$i][1];
 
         $linesHasError = false;
         if($errorRegion == 2 + (4*$i)
@@ -252,7 +251,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
             size="4"
             maxlength="4"
             name="player<?= $i+1 ?>[]"
-            value="<?= $prevRoundPlayerLines ?>"
+            value="<?= $existingPlayerLines ?>"
             <?= ($playerHasError ? $errorLocStr : "") ?>
           \>
         </td>
