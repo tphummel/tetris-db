@@ -306,25 +306,33 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
           \>
         </td>
       </tr>
-        <tr><td>Winner:</td><td
+      <tr>
+        <td>Winner:</td>
         <?php
-          if($errorRegion == 4 + (4*$i) or $errorRegion == 20 or $errorRegion == 21 + $i)
-          {
-            echo $errorLocStr;
+          $winHasError = false ;
+          if ($errorRegion == 4 + (4*$i)
+            or $errorRegion == 20
+            or $errorRegion == 21 + $i
+          ) {
+            $winHasError = true ;
+          }
+
+          if (!empty($errorMsg) && $users[$i][5] == "on") {
+            $existingPlayerWinner = " checked" ;
+          } else {
+            $existingPlayerWinner = "" ;
           }
         ?>
-        ><input type="checkbox" name="player<?php echo $i+1; ?>[]"
-        <?php
-          if(array_key_exists($i, $users)){
-            if($users[$i][5] == "on" AND !empty($errorMsg))
-            {
-              echo " checked";
-            }
-          }
-        ?>
-        ></td></tr>
-        </table>
+        <td <?= ($winHasError ? $errorLocStr : "")?>>
+          <input
+            type="checkbox"
+            name="player<?= $i+1 ?>[]"
+            <?= $existingPlayerWinner ?>
+          />
         </td>
+      </tr>
+    </table>
+  </td>
     <?php
     } //end "this match" for loop
 
