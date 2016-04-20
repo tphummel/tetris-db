@@ -256,26 +256,31 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
           \>
         </td>
       </tr>
+      <tr>
+        <td>Minutes:</td>
         <?php
-          if($errorRegion == 2 + (4*$i) or $errorRegion == 18 or $errorRegion == 21 + $i) {
-            echo $errorLocStr;
-          }
+        $existingPlayerMinutes = empty($errorMsg) ? "" : $users[$i][2] ;
+
+        $minHasError = false;
+        if($errorRegion == 3 + (4*$i)
+          or $errorRegion == 19
+          or $errorRegion == 21 + $i
+          or ($errorRegion == 25 and $i < 2)
+        ) {
+          $minHasError = true;
+        }
         ?>
-        ></td></tr>
-        <tr><td>Minutes:</td><td><input type="text" size="4" maxlength="4" name="player<?php echo $i+1; ?>[]" value="
-        <?php
-          if(!empty($users[$i][2]) AND !empty($errorMsg)) {
-            echo $users[$i][2];
-          } else {
-            echo "";
-          }
-        ?>"
-        <?php
-          if($errorRegion == 3 + (4*$i) or $errorRegion == 19 or $errorRegion == 21 + $i or ($errorRegion == 25 and $i < 2) ) {
-            echo $errorLocStr;
-          }
-        ?>
-        ></td></tr>
+        <td>
+          <input
+            type="text"
+            size="4"
+            maxlength="4"
+            name="player<?= $i+1 ?>[]"
+            <?= ($minHasError ? $errorLocStr : "") ?>
+            value="<?= $existingPlayerMinutes ?>"
+          />
+        </td>
+      </tr>
         <tr><td>Seconds:</td><td><input type="text" size="4" maxlength="4" name="player<?php echo $i+1; ?>[]" value="
         <?php
           if (!empty($users[$i][3]) AND !empty($errorMsg)) {
