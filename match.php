@@ -281,21 +281,31 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
           />
         </td>
       </tr>
-        <tr><td>Seconds:</td><td><input type="text" size="4" maxlength="4" name="player<?php echo $i+1; ?>[]" value="
+      <tr>
+        <td>Seconds:</td>
         <?php
-          if (!empty($users[$i][3]) AND !empty($errorMsg)) {
-            echo $users[$i][3];
-          } else {
-            echo "";
-          }
-        ?>"
-        <?php
-          if($errorRegion == 3 + (4*$i) or $errorRegion == 19 or $errorRegion == 21 + $i or ($errorRegion == 25 and $i < 2))
-          {
-            echo $errorLocStr;
+          $existingPlayerSeconds = empty($errorMsg) ? "" : $users[$i][3] ;
+
+          $secHasError = false;
+          if($errorRegion == 3 + (4*$i)
+            or $errorRegion == 19
+            or $errorRegion == 21 + $i
+            or ($errorRegion == 25 and $i < 2)
+          ) {
+            $secHasError = true;
           }
         ?>
-        ></td></tr>
+        <td>
+          <input
+            type="text"
+            size="4"
+            maxlength="4"
+            name="player<?= $i+1 ?>[]"
+            <?= ($secHasError ? $errorLocStr : "") ?>
+            value="<?= $existingPlayerSeconds ?>"
+          \>
+        </td>
+      </tr>
         <tr><td>Winner:</td><td
         <?php
           if($errorRegion == 4 + (4*$i) or $errorRegion == 20 or $errorRegion == 21 + $i)
