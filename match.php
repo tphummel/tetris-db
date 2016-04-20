@@ -204,7 +204,10 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
 
     for ($i = 0; $i <= 3; $i++) { //do 4 times, one for each player
       $playerHasError = false;
-      if($errorRegion == 1 + (4*$i) or $errorRegion == 17 or $errorRegion == 21 + $i) {
+      if($errorRegion == 1 + (4*$i)
+        or $errorRegion == 17
+        or $errorRegion == 21 + $i
+      ) {
         $playerHasError = true;
       }
     ?>
@@ -220,7 +223,10 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
               $userIsSelected = true;
             }
             ?>
-            <option value="<?= $name ?>" <?= ($userIsSelected ? " selected" : "")?>><?= $name ?></option>
+            <option
+              value="<?= $name ?>"
+              <?= ($userIsSelected ? " selected" : "")?>
+            ><?= $name ?></option>
             <?php
           }
           ?>
