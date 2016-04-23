@@ -101,29 +101,31 @@ if ( $matchToSave ) {
 
 //this happens on every load
 //clear post data for start of new match
-$users = array();
-$temp = array();
+$tempPlayers = array();
 
+// put $players in display order as $users
 if ( isset ( $orderedPlayerNames ) ) {
   foreach ( $orderedPlayerNames as $ogp ) {
     foreach ( $players as $p ) {
       if ( $ogp == $p [ 0 ] ) {
-        $users[] = $p;
+        $tempPlayers[] = $p;
       }
     }
   }
 } else {
   for ( $i = 0 ; $i < 4 ; $i++ ) {
     $user = array ( "", "", "", "", "", "" ) ;
-    $users [ $i ] = $user ;
+    $tempPlayers [ $i ] = $user ;
   }
 }
+
+$players = $tempPlayers;
 
 for ($q = 1; $q <= 4; $q++) {
   unset ( $_POST [ "player" . $q ] ) ;
 }
 
-showConsole( $users, $connection, $prevSavedMatch, "", "", "", "" ) ;
+showConsole( $players, $connection, $prevSavedMatch, "", "", "", "" ) ;
 
 /*
 ==========================================================================================
