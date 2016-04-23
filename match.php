@@ -187,7 +187,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
           <tr>
             <td>Note:</td>
 
-            <td colspan="4"><textarea rows="2" cols="10" name="note" value="<?php echo $note; ?>"></textarea></td>
+            <td colspan="4"><textarea rows="2" cols="10" name="note" value="<?= $note ?>"></textarea></td>
           </tr>
         </table>
       </td>
