@@ -217,7 +217,9 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
     }
 
     for ($i = 0; $i <= 3; $i++) { //do 4 times, one for each player
+      $playerIsActive = array_key_exists($i, $users) ;
       $playerHasError = false;
+
       if($errorRegion == 1 + (4*$i)
         or $errorRegion == 17
         or $errorRegion == 21 + $i
@@ -233,7 +235,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
           <?php
           foreach ($names as $name) {
             $userIsSelected = false;
-            if (array_key_exists($i, $users) && $users[$i][0] == $name) {
+            if ($playerIsActive && $users[$i][0] == $name) {
               $userIsSelected = true;
             }
             ?>
@@ -247,7 +249,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
         </select>
       </td></tr>
       <?php
-        $existingPlayerLines = empty($errorMsg) || empty($users[$i]) ? "" : $users[$i][1];
+        $existingPlayerLines = $playerIsActive && $playerHasError ? $users[$i][1] : "" ;
 
         $linesHasError = false;
         if($errorRegion == 2 + (4*$i)
@@ -273,7 +275,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       <tr>
         <td>Minutes:</td>
         <?php
-        $existingPlayerMinutes = empty($errorMsg) || empty($users[$i]) ? "" : $users[$i][2] ;
+        $existingPlayerMinutes = $playerIsActive && $playerHasError ? $users[$i][2] : "";
 
         $minHasError = false;
         if($errorRegion == 3 + (4*$i)
@@ -298,7 +300,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       <tr>
         <td>Seconds:</td>
         <?php
-          $existingPlayerSeconds = empty($errorMsg) || empty($users[$i]) ? "" : $users[$i][3] ;
+          $existingPlayerSeconds = $playerIsActive && $playerHasError ? $users[$i][3] : "" ;
 
           $secHasError = false;
           if($errorRegion == 3 + (4*$i)
@@ -331,7 +333,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
             $winHasError = true ;
           }
 
-          if (!empty($errorMsg) && !empty($users[$i]) && $users[$i][5] == "on") {
+          if ($playerIsActive && $playerHasError && $users[$i][5] == "on") {
             $existingPlayerWinner = " checked" ;
           } else {
             $existingPlayerWinner = "" ;
