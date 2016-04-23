@@ -1,4 +1,10 @@
 
+0.10.1 / 2016-04-23
+==================
+
+  * Merge pull request #9 from tphummel/match-console-updates
+  * Merge pull request #8 from tphummel/fix-tabs
+
 0.10.0 / 2016-04-17
 ==================
 
