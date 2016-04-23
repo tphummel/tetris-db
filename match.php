@@ -363,33 +363,23 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
           <tr>
             <th>Last Match</th>
           </tr>
+          <?php
+            if ($prevSavedMatch !== null) {
+          ?>
           <tr>
             <td align="center">
-            <?php
-              if ($prevSavedMatch !== null) {
-                echo (
-                  "Match #".$prevSavedMatch["id"]
-                    ."<br />"
-                    .$prevSavedMatch["ts"]
-                ) ;
-              }
-            ?></td>
+              Match #<?= $prevSavedMatch["id"] ?><br />
+              <?= $prevSavedMatch["ts"] ?>
+            </td>
           </tr>
           <tr>
             <th>
-              <?php
-                //show edit button only if there is a last match
-                // 12/10/10 - doesn't hide button
-                if ($prevSavedMatch !== null) {
-                ?>
-                  <form>
-                    <input type="submit" value="Edit" disabled>
-                  </form>
-                <?php
-                }
-              ?>
+              <form>
+                <input type="submit" value="Edit" disabled>
+              </form>
             </th>
           </tr>
+          <?php } ?>
         </table>
       </td>
 
