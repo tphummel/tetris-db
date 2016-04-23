@@ -75,11 +75,11 @@ if ( $matchToSave ) {
   mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
 
   //Create PlayerMatch Records
-  $current = mysql_insert_id ( ) ;
+  $matchId = mysql_insert_id ( ) ;
 
   $insertPM = "INSERT INTO playermatch VALUES ";
   foreach ( $erankedPlayers as $player ) {
-    $insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
+    $insertPM = $insertPM . "(" . $matchId . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
                       $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), ";
 
   }
@@ -88,13 +88,13 @@ if ( $matchToSave ) {
   mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
 
   $prevSavedMatch = [
-    "id" => $current,
+    "id" => $matchId,
     "ts" => $nowstamp,
     "players" => $players
   ] ;
 
   foreach ( $erankedPlayers as $perf ) {
-    $perf [ 8 ] = $current ;
+    $perf [ 8 ] = $matchId ;
      // Redis::publishPerformance ( $perf ) ;
   }
 }
