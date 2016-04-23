@@ -27,10 +27,10 @@ if ( array_key_exists ( 'player1', $_POST ) ) {
   unset ( $players ) ;
   $players = Helper::cleanPlayers ( $_POST ) ;
 
-  unset ( $ogPlayers ) ;
-  $ogPlayers = array ( ) ;
+  unset ( $orderedPlayerNames ) ;
+  $orderedPlayerNames = array ( ) ;
   foreach ( $players as $player ) {
-    $ogPlayers[] = $player [ 0 ] ;
+    $orderedPlayerNames[] = $player [ 0 ] ;
   }
 
   $location = $_POST [ "location" ] ;
@@ -104,8 +104,8 @@ if ( $matchToSave ) {
 $users = array();
 $temp = array();
 
-if ( isset ( $ogPlayers ) ) {
-  foreach ( $ogPlayers as $ogp ) {
+if ( isset ( $orderedPlayerNames ) ) {
+  foreach ( $orderedPlayerNames as $ogp ) {
     foreach ( $players as $p ) {
       if ( $ogp == $p [ 0 ] ) {
         $users[] = $p;
