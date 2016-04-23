@@ -87,10 +87,18 @@ if ( $matchToSave ) {
 
   mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
 
+  $erankedInDisplayOrder = array ( ) ;
+  foreach ($orderedPlayerNames as $orderedName) {
+    foreach ($erankedPlayers as $erankedPlayer) {
+      if ($erankedPlayer [ 0 ] === $orderedName) {
+        $erankedInDisplayOrder[] = $erankedPlayer ;
+      }
+    }
+  }
   $prevSavedMatch = [
     "id" => $matchId,
     "ts" => $nowstamp,
-    "players" => $players
+    "players" => $erankedInDisplayOrder
   ] ;
 
   foreach ( $erankedPlayers as $perf ) {
@@ -372,7 +380,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
               <?php
                 //show edit button only if there is a last match
                 // 12/10/10 - doesn't hide button
-                if (!empty($users)) {
+                if ($prevSavedMatch !== null) {
                 ?>
                   <form>
                     <input type="submit" value="Edit" disabled>
@@ -386,31 +394,21 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       </td>
 
     <?php
+    $playerCount = count ( $prevSavedMatch['players'] ) ;
     for ($j = 0; $j <= 3; $j++) { //do 4 times, one for each player
     ?>
     <td valign="middle">
     <?php
-    // LAST MATCH
-    if (isset($users[$j][0]) && $users[$j][0] != "VACANT") {
-      // hideous finding last match by max(matchid)
-      $query = "select pm.lines, pm.time, pm.wrank, pm.erank,
-(select count(playerid) from playermatch where matchid = pm.matchid) as pCt
-      FROM playermatch pm
-      WHERE playerid = (SELECT playerid FROM player WHERE username = '" . $users[$j][0] . "')
-      AND matchid = (SELECT MAX(matchid) FROM tntmatch)";
-      $result = mysql_query($query, $connection) or die(mysql_error());
-      $data = mysql_fetch_array($result);
+    $prevMatchPlayer = $prevSavedMatch ['players'] [$j] ;
+    if ($prevMatchPlayer) {
+      $wrank = $prevMatchPlayer[5];
+      $wpts = rankToPts($wrank, $playerCount);
 
-      $pCount = $data["pCt"]; //get player count to use with rankToPts udf.
+      $erank = $prevMatchPlayer[7];
+      $epts = rankToPts($erank, $playerCount);
 
-      $wrank = $data["wrank"];
-      $wpts = rankToPts($wrank, $pCount);
-
-      $erank = $data["erank"];
-      $epts = rankToPts($erank, $pCount); //udf converts rank to points for power ranking
-
-      $lines = $data["lines"];
-      $time = $data["time"];
+      $lines = $prevMatchPlayer[1];
+      $time = $prevMatchPlayer[4];
       $min = intval($time/60);
       $sec = str_pad($time - $min*60,2,"0", STR_PAD_LEFT);
       if ($time != 0) {
