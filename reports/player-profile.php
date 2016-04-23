@@ -277,8 +277,8 @@ function printCalendarReport ( $player ) {
         } else {
           $tdclass = "class=unowned";
         }
-
-        echo "<td $tdclass>$count</td>" ;
+        $displayCount = $count < 100 ? $count : "*" ;
+        echo "<td $tdclass>$displayCount</td>" ;
       }
       echo "</tr>" ;
     }
