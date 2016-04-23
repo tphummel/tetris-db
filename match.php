@@ -395,6 +395,11 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
 
     <?php
     $playerCount = count ( $prevSavedMatch['players'] ) ;
+    $prevMatchSums = array (
+      "time" => 0,
+      "lines" => 0
+    ) ;
+
     for ($j = 0; $j <= 3; $j++) { //do 4 times, one for each player
     ?>
     <td valign="middle">
@@ -408,7 +413,11 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       $epts = rankToPts($erank, $playerCount);
 
       $lines = $prevMatchPlayer[1];
+      $prevMatchSums [ "lines" ] += $lines ;
+
       $time = $prevMatchPlayer[4];
+      $prevMatchSums [ "time" ] += $time ;
+
       $min = intval($time/60);
       $sec = str_pad($time - $min*60,2,"0", STR_PAD_LEFT);
       if ($time != 0) {
@@ -439,17 +448,40 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
 
   } //end "last match" for loop
 
-/*
-==========================================================================================
-==========================================================================================
-*/
+
+    ?>
+    <td>
+      <?php
+      $time = $prevMatchSums [ "time" ] ;
+      $lines = $prevMatchSums [ "lines" ] ;
+
+      $min = intval($time/60);
+      $sec = str_pad($time - $min*60,2,"0", STR_PAD_LEFT);
+      if ($time != 0) {
+        $eff = $lines/$time;
+      } else {
+        $eff = 0;
+      }
+
+      $timeStr = $min . ":" . $sec;
+      $effStr = number_format($eff,3);
+      $grade = gradePerf($time, $lines);
+      ?>
+      <table align="center">
+        <caption><h3>Combined</h3></caption>
+        <tr><td>Lines:</td><td><?= $lines ?></td></tr>
+        <tr><td>Time:</td><td><?= $timeStr ?></td></tr>
+        <tr><td>LPS:</td><td><?= $effStr ?></td></tr>
+        <tr><td>Grade:</td><td><h2><?= $grade ?></h2></td></tr>
+      </table>
+    </td>
+    </tr>
+    <?php
     $today = date("Y-m-d");
 
     $now = date("Y-m-d H:i:s");
     $oneDayAgo = date("Y-m-d H:i:s", strtotime($now) - 60 * 60 * 24) ;
     ?>
-    </tr>
-
     <!--DAY SUMMARY -- RUNS 4 TIMES-->
     <tr>
     <td align="center">
