@@ -27,17 +27,17 @@ if ( array_key_exists ( 'player1', $_POST ) ) {
   unset ( $players ) ;
   $players = Helper::cleanPlayers ( $_POST ) ;
 
-  unset ( $ogPlayers ) ;
-  $ogPlayers = array ( ) ;
+  unset ( $orderedPlayerNames ) ;
+  $orderedPlayerNames = array ( ) ;
   foreach ( $players as $player ) {
-    $ogPlayers[] = $player [ 0 ] ;
+    $orderedPlayerNames[] = $player [ 0 ] ;
   }
 
   $location = $_POST [ "location" ] ;
   $note = $_POST [ "note" ] ;
 
 }
-$confirmStr = '';
+$prevSavedMatch = null ;
 
 if ( array_key_exists('action', $_GET ) && $_GET['action'] === 'add' ) {
 	$matchToSave = true;
@@ -52,7 +52,7 @@ if ( $matchToSave ) {
   //reshow form with highlights if error is caught
   if( $valid [ "isValid" ] == false ) {
     $errorRegion = true ;
-    showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
+    showConsole ( $players, $connection, null, $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
     exit();
   }
 
@@ -75,58 +75,72 @@ if ( $matchToSave ) {
   mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
 
   //Create PlayerMatch Records
-  $current = mysql_insert_id ( ) ;
+  $matchId = mysql_insert_id ( ) ;
 
   $insertPM = "INSERT INTO playermatch VALUES ";
   foreach ( $erankedPlayers as $player ) {
-    $insertPM = $insertPM . "(" . $current . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
+    $insertPM = $insertPM . "(" . $matchId . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
                       $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), ";
 
   }
   $insertPM_trimmed = rtrim($insertPM, ", ");
 
-  $confirmStr = "Match #" . $current . "<br>" . $nowstamp;
-
   mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
 
+  $erankedInDisplayOrder = array ( ) ;
+  foreach ($orderedPlayerNames as $orderedName) {
+    foreach ($erankedPlayers as $erankedPlayer) {
+      if ($erankedPlayer [ 0 ] === $orderedName) {
+        $erankedInDisplayOrder[] = $erankedPlayer ;
+      }
+    }
+  }
+  $prevSavedMatch = [
+    "id" => $matchId,
+    "ts" => $nowstamp,
+    "players" => $erankedInDisplayOrder
+  ] ;
+
   foreach ( $erankedPlayers as $perf ) {
-    $perf [ 8 ] = $current ;
+    $perf [ 8 ] = $matchId ;
      // Redis::publishPerformance ( $perf ) ;
   }
 }
 
 //this happens on every load
 //clear post data for start of new match
-$users = array();
-$temp = array();
+$tempPlayers = array();
 
-if ( isset ( $ogPlayers ) ) {
-  foreach ( $ogPlayers as $ogp ) {
+// put $players in display order as $users
+if ( isset ( $orderedPlayerNames ) ) {
+  foreach ( $orderedPlayerNames as $ogp ) {
     foreach ( $players as $p ) {
       if ( $ogp == $p [ 0 ] ) {
-        $users[] = $p;
+        $tempPlayers[] = $p;
       }
     }
   }
 } else {
   for ( $i = 0 ; $i < 4 ; $i++ ) {
     $user = array ( "", "", "", "", "", "" ) ;
-    $users [ $i ] = $user ;
+    $tempPlayers [ $i ] = $user ;
   }
 }
+
+$players = $tempPlayers;
 
 for ($q = 1; $q <= 4; $q++) {
   unset ( $_POST [ "player" . $q ] ) ;
 }
 
-showConsole( $users, $connection, $confirmStr, "", "", "", "" ) ;
+showConsole( $players, $connection, $prevSavedMatch, "", "", "", "" ) ;
 
 /*
 ==========================================================================================
 ==========================================================================================
 */
-function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion, $location, $note) {
-  $errorLocStr =  ' class="errorLocation"' ;
+function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
+  $errCssClass =  ' class="errorLocation"' ;
 
   if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
     ?>
@@ -214,7 +228,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
       <td><table>
       <tr><td>Username:</td>
       <td>
-        <select name="player<?= $i+1 ?>[]" <?= ($playerHasError ? $errorLocStr : "") ?>>
+        <select name="player<?= $i+1 ?>[]" <?= ($playerHasError ? $errCssClass : "") ?>>
           <option value="VACANT">VACANT</option>
           <?php
           foreach ($names as $name) {
@@ -252,7 +266,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
             maxlength="4"
             name="player<?= $i+1 ?>[]"
             value="<?= $existingPlayerLines ?>"
-            <?= ($playerHasError ? $errorLocStr : "") ?>
+            <?= ($playerHasError ? $errCssClass : "") ?>
           \>
         </td>
       </tr>
@@ -276,7 +290,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
             size="4"
             maxlength="4"
             name="player<?= $i+1 ?>[]"
-            <?= ($minHasError ? $errorLocStr : "") ?>
+            <?= ($minHasError ? $errCssClass : "") ?>
             value="<?= $existingPlayerMinutes ?>"
           />
         </td>
@@ -301,7 +315,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
             size="4"
             maxlength="4"
             name="player<?= $i+1 ?>[]"
-            <?= ($secHasError ? $errorLocStr : "") ?>
+            <?= ($secHasError ? $errCssClass : "") ?>
             value="<?= $existingPlayerSeconds ?>"
           \>
         </td>
@@ -323,7 +337,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
             $existingPlayerWinner = "" ;
           }
         ?>
-        <td <?= ($winHasError ? $errorLocStr : "")?>>
+        <td <?= ($winHasError ? $errCssClass : "")?>>
           <input
             type="checkbox"
             name="player<?= $i+1 ?>[]"
@@ -352,8 +366,12 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
           <tr>
             <td align="center">
             <?php
-              if (!empty($confirmStr)) {
-                echo $confirmStr;
+              if ($prevSavedMatch !== null) {
+                echo (
+                  "Match #".$prevSavedMatch["id"]
+                    ."<br />"
+                    .$prevSavedMatch["ts"]
+                ) ;
               }
             ?></td>
           </tr>
@@ -362,7 +380,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
               <?php
                 //show edit button only if there is a last match
                 // 12/10/10 - doesn't hide button
-                if (!empty($users)) {
+                if ($prevSavedMatch !== null) {
                 ?>
                   <form>
                     <input type="submit" value="Edit" disabled>
@@ -376,31 +394,30 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
       </td>
 
     <?php
+    $playerCount = count ( $prevSavedMatch['players'] ) ;
+    $prevMatchSums = array (
+      "time" => 0,
+      "lines" => 0
+    ) ;
+
     for ($j = 0; $j <= 3; $j++) { //do 4 times, one for each player
     ?>
     <td valign="middle">
     <?php
-    // LAST MATCH
-    if (isset($users[$j][0]) && $users[$j][0] != "VACANT") {
-      // hideous finding last match by max(matchid)
-      $query = "select pm.lines, pm.time, pm.wrank, pm.erank,
-(select count(playerid) from playermatch where matchid = pm.matchid) as pCt
-      FROM playermatch pm
-      WHERE playerid = (SELECT playerid FROM player WHERE username = '" . $users[$j][0] . "')
-      AND matchid = (SELECT MAX(matchid) FROM tntmatch)";
-      $result = mysql_query($query, $connection) or die(mysql_error());
-      $data = mysql_fetch_array($result);
+    if (array_key_exists($j, $prevSavedMatch ['players'] )) {
+      $prevMatchPlayer = $prevSavedMatch ['players'] [$j] ;
+      $wrank = $prevMatchPlayer[5];
+      $wpts = rankToPts($wrank, $playerCount);
 
-      $pCount = $data["pCt"]; //get player count to use with rankToPts udf.
+      $erank = $prevMatchPlayer[7];
+      $epts = rankToPts($erank, $playerCount);
 
-      $wrank = $data["wrank"];
-      $wpts = rankToPts($wrank, $pCount);
+      $lines = $prevMatchPlayer[1];
+      $prevMatchSums [ "lines" ] += $lines ;
 
-      $erank = $data["erank"];
-      $epts = rankToPts($erank, $pCount); //udf converts rank to points for power ranking
+      $time = $prevMatchPlayer[4];
+      $prevMatchSums [ "time" ] += $time ;
 
-      $lines = $data["lines"];
-      $time = $data["time"];
       $min = intval($time/60);
       $sec = str_pad($time - $min*60,2,"0", STR_PAD_LEFT);
       if ($time != 0) {
@@ -415,9 +432,6 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
 
       //lib/statPower.php
       $power = computePower($wpts, $epts, $eff);
-      // already formatting value in computePower() - don't format again
-      //$pwrstr = number_format($power, 3);
-      $pwrstr = $power;
       echo '<table align="center"';
       echo '>';
       echo '
@@ -426,7 +440,7 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
       <tr><td>Lines:</td><td>' . $lines . '</td></tr>
       <tr><td>Time:</td><td>' . $timeStr . '</td></tr>
       <tr><td>LPS:</td><td>' . $effStr . '</td></tr>
-      <tr><td>POWER:</td><td>' . $pwrstr . '</td></tr>
+      <tr><td>POWER:</td><td>' . $power . '</td></tr>
       <tr><td>Grade: </td><td><h2>' . $grade . '</h2></td></tr>
       </table>
       </td>';
@@ -434,17 +448,40 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
 
   } //end "last match" for loop
 
-/*
-==========================================================================================
-==========================================================================================
-*/
+
+    ?>
+    <td>
+      <?php
+      $time = $prevMatchSums [ "time" ] ;
+      $lines = $prevMatchSums [ "lines" ] ;
+
+      $min = intval($time/60);
+      $sec = str_pad($time - $min*60,2,"0", STR_PAD_LEFT);
+      if ($time != 0) {
+        $eff = $lines/$time;
+      } else {
+        $eff = 0;
+      }
+
+      $timeStr = $min . ":" . $sec;
+      $effStr = number_format($eff,3);
+      $grade = gradePerf($time, $lines);
+      ?>
+      <table align="center">
+        <caption><h3>Combined</h3></caption>
+        <tr><td>Lines:</td><td><?= $lines ?></td></tr>
+        <tr><td>Time:</td><td><?= $timeStr ?></td></tr>
+        <tr><td>LPS:</td><td><?= $effStr ?></td></tr>
+        <tr><td>Grade:</td><td><h2><?= $grade ?></h2></td></tr>
+      </table>
+    </td>
+    </tr>
+    <?php
     $today = date("Y-m-d");
 
     $now = date("Y-m-d H:i:s");
     $oneDayAgo = date("Y-m-d H:i:s", strtotime($now) - 60 * 60 * 24) ;
     ?>
-    </tr>
-
     <!--DAY SUMMARY -- RUNS 4 TIMES-->
     <tr>
     <td align="center">
