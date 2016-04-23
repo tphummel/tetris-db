@@ -130,7 +130,7 @@ showConsole( $users, $connection, $prevSavedMatch, "", "", "", "" ) ;
 ==========================================================================================
 */
 function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
-  $errorLocStr =  ' class="errorLocation"' ;
+  $errCssClass =  ' class="errorLocation"' ;
 
   if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
     ?>
@@ -218,7 +218,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       <td><table>
       <tr><td>Username:</td>
       <td>
-        <select name="player<?= $i+1 ?>[]" <?= ($playerHasError ? $errorLocStr : "") ?>>
+        <select name="player<?= $i+1 ?>[]" <?= ($playerHasError ? $errCssClass : "") ?>>
           <option value="VACANT">VACANT</option>
           <?php
           foreach ($names as $name) {
@@ -256,7 +256,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
             maxlength="4"
             name="player<?= $i+1 ?>[]"
             value="<?= $existingPlayerLines ?>"
-            <?= ($playerHasError ? $errorLocStr : "") ?>
+            <?= ($playerHasError ? $errCssClass : "") ?>
           \>
         </td>
       </tr>
@@ -280,7 +280,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
             size="4"
             maxlength="4"
             name="player<?= $i+1 ?>[]"
-            <?= ($minHasError ? $errorLocStr : "") ?>
+            <?= ($minHasError ? $errCssClass : "") ?>
             value="<?= $existingPlayerMinutes ?>"
           />
         </td>
@@ -305,7 +305,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
             size="4"
             maxlength="4"
             name="player<?= $i+1 ?>[]"
-            <?= ($secHasError ? $errorLocStr : "") ?>
+            <?= ($secHasError ? $errCssClass : "") ?>
             value="<?= $existingPlayerSeconds ?>"
           \>
         </td>
@@ -327,7 +327,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
             $existingPlayerWinner = "" ;
           }
         ?>
-        <td <?= ($winHasError ? $errorLocStr : "")?>>
+        <td <?= ($winHasError ? $errCssClass : "")?>>
           <input
             type="checkbox"
             name="player<?= $i+1 ?>[]"
