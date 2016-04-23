@@ -423,9 +423,6 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
 
       //lib/statPower.php
       $power = computePower($wpts, $epts, $eff);
-      // already formatting value in computePower() - don't format again
-      //$pwrstr = number_format($power, 3);
-      $pwrstr = $power;
       echo '<table align="center"';
       echo '>';
       echo '
@@ -434,7 +431,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       <tr><td>Lines:</td><td>' . $lines . '</td></tr>
       <tr><td>Time:</td><td>' . $timeStr . '</td></tr>
       <tr><td>LPS:</td><td>' . $effStr . '</td></tr>
-      <tr><td>POWER:</td><td>' . $pwrstr . '</td></tr>
+      <tr><td>POWER:</td><td>' . $power . '</td></tr>
       <tr><td>Grade: </td><td><h2>' . $grade . '</h2></td></tr>
       </table>
       </td>';
