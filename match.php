@@ -363,33 +363,23 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
           <tr>
             <th>Last Match</th>
           </tr>
+          <?php
+            if ($prevSavedMatch !== null) {
+          ?>
           <tr>
             <td align="center">
-            <?php
-              if ($prevSavedMatch !== null) {
-                echo (
-                  "Match #".$prevSavedMatch["id"]
-                    ."<br />"
-                    .$prevSavedMatch["ts"]
-                ) ;
-              }
-            ?></td>
+              Match #<?= $prevSavedMatch["id"] ?><br />
+              <?= $prevSavedMatch["ts"] ?>
+            </td>
           </tr>
           <tr>
             <th>
-              <?php
-                //show edit button only if there is a last match
-                // 12/10/10 - doesn't hide button
-                if ($prevSavedMatch !== null) {
-                ?>
-                  <form>
-                    <input type="submit" value="Edit" disabled>
-                  </form>
-                <?php
-                }
-              ?>
+              <form>
+                <input type="submit" value="Edit" disabled>
+              </form>
             </th>
           </tr>
+          <?php } ?>
         </table>
       </td>
 
@@ -404,7 +394,9 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
     ?>
     <td valign="middle">
     <?php
-    if (array_key_exists($j, $prevSavedMatch ['players'] )) {
+    if ($prevSavedMatch ['players'] &&
+      array_key_exists($j, $prevSavedMatch ['players'] )) {
+
       $prevMatchPlayer = $prevSavedMatch ['players'] [$j] ;
       $wrank = $prevMatchPlayer[5];
       $wpts = rankToPts($wrank, $playerCount);
@@ -448,7 +440,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
 
   } //end "last match" for loop
 
-
+    if ($prevSavedMatch) {
     ?>
     <td>
       <?php
@@ -475,6 +467,9 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
         <tr><td>Grade:</td><td><h2><?= $grade ?></h2></td></tr>
       </table>
     </td>
+    <?php
+    }
+    ?>
     </tr>
     <?php
     $today = date("Y-m-d");
