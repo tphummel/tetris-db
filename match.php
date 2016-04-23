@@ -247,7 +247,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
         </select>
       </td></tr>
       <?php
-        $existingPlayerLines = empty($errorMsg) ? "" : $users[$i][1];
+        $existingPlayerLines = empty($errorMsg) || empty($users[$i]) ? "" : $users[$i][1];
 
         $linesHasError = false;
         if($errorRegion == 2 + (4*$i)
@@ -273,7 +273,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       <tr>
         <td>Minutes:</td>
         <?php
-        $existingPlayerMinutes = empty($errorMsg) ? "" : $users[$i][2] ;
+        $existingPlayerMinutes = empty($errorMsg) || empty($users[$i]) ? "" : $users[$i][2] ;
 
         $minHasError = false;
         if($errorRegion == 3 + (4*$i)
@@ -298,7 +298,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       <tr>
         <td>Seconds:</td>
         <?php
-          $existingPlayerSeconds = empty($errorMsg) ? "" : $users[$i][3] ;
+          $existingPlayerSeconds = empty($errorMsg) || empty($users[$i]) ? "" : $users[$i][3] ;
 
           $secHasError = false;
           if($errorRegion == 3 + (4*$i)
@@ -331,7 +331,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
             $winHasError = true ;
           }
 
-          if (!empty($errorMsg) && $users[$i][5] == "on") {
+          if (!empty($errorMsg) && !empty($users[$i]) && $users[$i][5] == "on") {
             $existingPlayerWinner = " checked" ;
           } else {
             $existingPlayerWinner = "" ;
