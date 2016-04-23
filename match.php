@@ -52,7 +52,7 @@ if ( $matchToSave ) {
   //reshow form with highlights if error is caught
   if( $valid [ "isValid" ] == false ) {
     $errorRegion = true ;
-    showConsole ( $players, $connection, "", $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
+    showConsole ( $players, $connection, null, $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
     exit();
   }
 
