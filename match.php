@@ -404,7 +404,9 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
     ?>
     <td valign="middle">
     <?php
-    if (array_key_exists($j, $prevSavedMatch ['players'] )) {
+    if ($prevSavedMatch ['players'] &&
+      array_key_exists($j, $prevSavedMatch ['players'] )) {
+
       $prevMatchPlayer = $prevSavedMatch ['players'] [$j] ;
       $wrank = $prevMatchPlayer[5];
       $wpts = rankToPts($wrank, $playerCount);
