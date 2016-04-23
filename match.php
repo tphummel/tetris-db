@@ -450,7 +450,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
 
   } //end "last match" for loop
 
-
+    if ($prevSavedMatch) {
     ?>
     <td>
       <?php
@@ -477,6 +477,9 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
         <tr><td>Grade:</td><td><h2><?= $grade ?></h2></td></tr>
       </table>
     </td>
+    <?php
+    }
+    ?>
     </tr>
     <?php
     $today = date("Y-m-d");
