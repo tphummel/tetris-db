@@ -37,7 +37,7 @@ if ( array_key_exists ( 'player1', $_POST ) ) {
   $note = $_POST [ "note" ] ;
 
 }
-$confirmStr = '';
+$prevSavedMatch = null ;
 
 if ( array_key_exists('action', $_GET ) && $_GET['action'] === 'add' ) {
 	$matchToSave = true;
@@ -85,9 +85,13 @@ if ( $matchToSave ) {
   }
   $insertPM_trimmed = rtrim($insertPM, ", ");
 
-  $confirmStr = "Match #" . $current . "<br>" . $nowstamp;
-
   mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
+
+  $prevSavedMatch = [
+    "id" => $current,
+    "ts" => $nowstamp,
+    "players" => $players
+  ] ;
 
   foreach ( $erankedPlayers as $perf ) {
     $perf [ 8 ] = $current ;
@@ -119,13 +123,13 @@ for ($q = 1; $q <= 4; $q++) {
   unset ( $_POST [ "player" . $q ] ) ;
 }
 
-showConsole( $users, $connection, $confirmStr, "", "", "", "" ) ;
+showConsole( $users, $connection, $prevSavedMatch, "", "", "", "" ) ;
 
 /*
 ==========================================================================================
 ==========================================================================================
 */
-function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion, $location, $note) {
+function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
   $errorLocStr =  ' class="errorLocation"' ;
 
   if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
@@ -352,8 +356,12 @@ function showConsole ( $users, $connection, $confirmStr, $errorMsg, $errorRegion
           <tr>
             <td align="center">
             <?php
-              if (!empty($confirmStr)) {
-                echo $confirmStr;
+              if ($prevSavedMatch !== null) {
+                echo (
+                  "Match #".$prevSavedMatch["id"]
+                    ."<br />"
+                    .$prevSavedMatch["ts"]
+                ) ;
               }
             ?></td>
           </tr>
