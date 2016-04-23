@@ -1,4 +1,13 @@
 
+0.11.0 / 2016-04-23
+==================
+
+  * Merge pull request #11 from tphummel/calendar-collect-fix
+    * profile: calendar report. print `*` when count > 99
+  * Merge pull request #10 from tphummel/console-prev-match
+    * match: added combined prev match stats
+
+
 0.10.1 / 2016-04-23
 ==================
 
