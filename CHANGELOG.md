@@ -1,4 +1,11 @@
 
+0.11.1 / 2016-04-23
+==================
+
+  * match: error handling conditionals reversed and easier to reason about
+  * match: resolve php warnings when players < 4 on validate fail
+  * Merge pull request #12 from tphummel/console-prev-match-fix
+
 0.11.0 / 2016-04-23
 ==================
 
