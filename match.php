@@ -1,8 +1,5 @@
 <?php
 
-$title = "The New Tetris - Match Console" ;
-require_once ( __DIR__ . "/templates/header.php" ) ;
-
 require_once ( __DIR__ . "/config/db.php" ) ;
 require_once ( __DIR__ . "/lib/grade.php" ) ;
 require_once ( __DIR__ . "/lib/points.inc.php" ) ;
@@ -101,6 +98,15 @@ if ( $matchToSave ) {
     "players" => $erankedInDisplayOrder
   ] ;
 
+  if ( !array_key_exists("session-match-id-inclusive", $_COOKIE) ) {
+    setcookie(
+      "session-match-id-inclusive",
+      $matchId,
+      null, // session expiration
+      "/match.php"
+    ) ;
+  }
+
   foreach ( $erankedPlayers as $perf ) {
     $perf [ 8 ] = $matchId ;
      // Redis::publishPerformance ( $perf ) ;
@@ -140,6 +146,9 @@ showConsole( $players, $connection, $prevSavedMatch, "", "", "", "" ) ;
 ==========================================================================================
 */
 function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
+  $title = "The New Tetris - Match Console" ;
+  require_once ( __DIR__ . "/templates/header.php" ) ;
+
   $errCssClass =  ' class="errorLocation"' ;
 
   if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
