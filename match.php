@@ -1,8 +1,5 @@
 <?php
 
-$title = "The New Tetris - Match Console" ;
-require_once ( __DIR__ . "/templates/header.php" ) ;
-
 require_once ( __DIR__ . "/config/db.php" ) ;
 require_once ( __DIR__ . "/lib/grade.php" ) ;
 require_once ( __DIR__ . "/lib/points.inc.php" ) ;
@@ -101,6 +98,15 @@ if ( $matchToSave ) {
     "players" => $erankedInDisplayOrder
   ] ;
 
+  if ( !array_key_exists("session-match-id-inclusive", $_COOKIE) ) {
+    setcookie(
+      "session-match-id-inclusive",
+      $matchId,
+      null, // session expiration
+      "/match.php"
+    ) ;
+  }
+
   foreach ( $erankedPlayers as $perf ) {
     $perf [ 8 ] = $matchId ;
      // Redis::publishPerformance ( $perf ) ;
@@ -140,6 +146,9 @@ showConsole( $players, $connection, $prevSavedMatch, "", "", "", "" ) ;
 ==========================================================================================
 */
 function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
+  $title = "The New Tetris - Match Console" ;
+  require_once ( __DIR__ . "/templates/header.php" ) ;
+
   $errCssClass =  ' class="errorLocation"' ;
 
   if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
@@ -474,112 +483,87 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
     ?>
     </tr>
     <?php
-    $today = date("Y-m-d");
-
-    $now = date("Y-m-d H:i:s");
-    $oneDayAgo = date("Y-m-d H:i:s", strtotime($now) - 60 * 60 * 24) ;
+    $sessionCutoff = $_COOKIE["session-match-id-inclusive"] ?: $prevSavedMatch ["id"] ;
     ?>
-    <!--DAY SUMMARY -- RUNS 4 TIMES-->
     <tr>
     <td align="center">
       <table border="0">
-        <tr>
-          <th>Last 24 Hrs</th>
-        </tr>
-        <tr>
-          <td>
-            <?php
-                //show edit button only if there is day match data
-                if (!empty($users)) {
-                ?>
-                  <form>
-                    <input type="submit" value="Edit" disabled>
-                  </form>
-                <?php
-                }
-            ?>
-          </td>
-        </tr>
+        <tr><th>Current Session</th></tr>
+        <?php if (isset($sessionCutoff)) { ?>
+        <tr><td>Since #<?= $sessionCutoff ?></td></tr>
+        <?php } ?>
       </table>
     </td>
 
     <?php
     for ($k = 0; $k <= 3; $k++) { //do 4 times, one for each player
+      $playerIsActive = array_key_exists($k, $users) ;
+      $playerName = $playerIsActive ? $users[$k][0] : null ;
       echo '<td valign="middle">';
-    ?>
 
-    <?php
-    //query for day sum
-
-    if (isset($users[$k][0]) && $users[$k][0] != "VACANT") {
-      $query =
-      "SELECT count(today.mid) as totgames, sum(today.time) as tottime, sum(today.score) as totlines
-      FROM (SELECT m.matchid as mid, p.username as name, pm.lines as score, pm.time as time
+    if ($playerIsActive && $playerName && $playerName !== "VACANT") {
+      $query = "
+        SELECT count(a.matchid) as games,
+          sum(a.type) as exp,
+          sum(a.time) as `time`,
+          sum(a.lines) as `lines`,
+          sum(a.wrank) as wrank,
+          sum(if(a.wrank = 1, 1, 0)) as w1,
+          sum(if(a.wrank = 2, 1, 0)) as w2,
+          sum(if(a.wrank = 3, 1, 0)) as w3,
+          sum(if(a.wrank = 4, 1, 0)) as w4,
+          sum(a.type)+count(a.matchid)-sum(a.wrank) as wpts,
+          sum(a.erank) as erank,
+          sum(if(a.erank = 1, 1, 0)) as e1,
+          sum(if(a.erank = 2, 1, 0)) as e2,
+          sum(if(a.erank = 3, 1, 0)) as e3,
+          sum(if(a.erank = 4, 1, 0)) as e4,
+          sum(a.type)+count(a.matchid)-sum(a.erank) as epts
+        FROM (SELECT m.matchid, p.username, pm.lines, pm.time,
+        (select count(playerid) from playermatch where matchid = m.matchid) as type,
+        pm.wrank, pm.erank
           FROM playermatch pm, tntmatch m, player p
-          WHERE m.matchid = pm.matchid and pm.playerid = p.playerid and m.inputstamp >= '" . $oneDayAgo . "') today
-      WHERE today.name = '" . $users[$k][0] . "'";
+          WHERE m.matchid = pm.matchid
+          and pm.playerid = p.playerid
+          and m.matchid >= " . $sessionCutoff . "
+          and p.username = '" . $playerName . "'
+        ) a" ;
 
       $result = mysql_query($query, $connection) or die(mysql_error());
       $data = mysql_fetch_array($result);
 
-      $totgames = $data["totgames"];
-      $tottime = $data["tottime"];
+      $games = $data["games"];
+      $time = $data["time"];
+      $lines = $data["lines"];
+      $winPoints = $data["wpts"];
+      $effPoints = $data["epts"];
 
-      $totmin = intval($tottime/60);
-      $totsec = str_pad($tottime - $totmin*60,2,"0", STR_PAD_LEFT);
+      $minutes = intval($time/60);
+      $seconds = str_pad($time - $minutes*60,2,"0", STR_PAD_LEFT);
 
-      $timestr = $totmin . ":" . $totsec;
-      $totlines = $data["totlines"];
-      $dayLpsVal = ($tottime > 0 ? $totlines / $tottime : 0);
-      $dayLps = number_format($dayLpsVal,3);
+      $timeDisp = $minutes . ":" . $seconds;
 
-      $dayLpgVal = ($tottime > 0 ? $totlines / $totgames : 0);
-      $dayLpg = number_format($dayLpgVal,2);
-      $query = "select pm.lines, pm.time, pm.wrank, pm.erank,
-(select count(playerid) from playermatch where matchid = pm.matchid) as pCt
-from playermatch pm, tntmatch m, player p
-where pm.matchid = m.matchid
-  and p.playerid = pm.playerid
-  and p.username = '" . $users[$k][0] . "'
-  and m.matchdate = '" . $today . "'";
+      $lpsRaw = ($time > 0 ? $lines / $time : 0);
+      $lps = number_format($lpsRaw,3) . " (" .$lines." / ". $time . ")";
 
-      // old query using view
-      /*$query = "SELECT pm.lines, pm.time, pm.wrank as wrank, pm.erank as erank, pm.pCt as pCt
-      FROM  pmext pm, tmext m, player p
-      WHERE   pm.matchid = m.matchid and p.playerid = pm.playerid and p.username = '" . $users[$k][0] . "' and m.matchdate = '" . $today . "'"; */
+      $lpgRaw = ($time > 0 ? $lines / $games : 0);
+      $lpg = number_format($lpgRaw,2) . " (" .$lines." / ".$games.")";
 
-      $resultDaySum = mysql_query($query, $connection) or die(mysql_error());
-
-      //this should be sproc eventually - or an effen aggregate query???
-      $epts = 0;
-      $wpts = 0;
-      // why dont just sum in db query? looks like i'm getting win pts here, only reason.
-      while ($rec = mysql_fetch_array($resultDaySum)) {
-        $pCount = $rec["pCt"];
-        $win = $rec["wrank"];
-        $pts1 = rankToPts($win, $pCount); //udf for getting pts
-        $wpts = $wpts + $pts1; //sum day's wpts
-
-        $eff = $rec["erank"];
-        $pts2 = rankToPts($eff, $pCount);
-        $epts = $epts + $pts2; //sum day's epts
-      }
-
-      //power calculation
-      $eptsg = number_format(($totgames > 0 ? $epts/$totgames : 0),3);
-      $wptsg = number_format(($totgames > 0 ? $wpts/$totgames : 0),3);
+      $eptsg = number_format(($games > 0 ? $effPoints/$games : 0),3);
+      // $eptsg .= " (" .$data["e1"].")"
+      $wptsg = number_format(($games > 0 ? $winPoints/$games : 0),3);
 
       //lib/statPower.php
-      $dayPower = computePower($wptsg, $eptsg, $dayLps);
+      $power = computePower($wptsg, $eptsg, $lps);
 
       ?>
       <table align="center">
-      <tr><td>G(Time)</td><td><?php echo $totgames . "(" . $timestr . ")"; ?></td></tr>
-      <tr><td>LPS</td><td><?php echo $dayLps; ?></td></tr>
-      <tr><td>LPG</td><td><?php echo $dayLpg; ?></td></tr>
+      <tr><td>G (Time)</td><td><?php echo $games . " (" . $timeDisp . ")"; ?></td></tr>
+      <tr><td>Li / Sec</td><td><?php echo $lps; ?></td></tr>
+      <tr><td>Li / Game</td><td><?php echo $lpg; ?></td></tr>
       <tr><td>W-PTS/G</td><td><?php echo $wptsg; ?></td></tr>
       <tr><td>E-PTS/G</td><td><?php echo $eptsg; ?></td></tr>
-      <tr><td>POWER</td><td><?php echo $dayPower; ?></td></tr>
+      <tr><td>POWER</td><td><?php echo $power; ?></td></tr>
       </table>
       <?php
     } //end if
