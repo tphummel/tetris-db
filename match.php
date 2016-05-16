@@ -558,11 +558,11 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
 
       ?>
       <table align="center">
-      <tr><td>G (Time)</td><td><?php echo $games . " (" . $timeDisp . ")"; ?></td></tr>
-      <tr><td>Li / Sec</td><td><?php echo $lps; ?></td></tr>
-      <tr><td>Li / Game</td><td><?php echo $lpg; ?></td></tr>
-      <tr><td>W-PTS/G</td><td><?php echo $wptsg; ?></td></tr>
-      <tr><td>E-PTS/G</td><td><?php echo $eptsg; ?></td></tr>
+      <tr><td>G (Time)</td><td><?= $games . " (" . $timeDisp . ")"; ?></td></tr>
+      <tr><td>Li / Sec</td><td><?= $lps; ?></td></tr>
+      <tr><td>Li / Game</td><td><?= $lpg; ?></td></tr>
+      <tr><td>W-PTS/G</td><td><?= $wptsg; ?></td></tr>
+      <tr><td>E-PTS/G</td><td><?= $eptsg; ?></td></tr>
       <tr>
         <td>
           <a href="https://github.com/tphummel/tetris-db/blob/master/lib/statPower.php" target="_blank">Power</a>
