@@ -563,7 +563,12 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       <tr><td>Li / Game</td><td><?php echo $lpg; ?></td></tr>
       <tr><td>W-PTS/G</td><td><?php echo $wptsg; ?></td></tr>
       <tr><td>E-PTS/G</td><td><?php echo $eptsg; ?></td></tr>
-      <tr><td>POWER</td><td><?php echo $power; ?></td></tr>
+      <tr>
+        <td>
+          <a href="https://github.com/tphummel/tetris-db/blob/master/lib/statPower.php" target="_blank">Power</a>
+        </td>
+        <td><?= $power; ?></td>
+      </tr>
       </table>
       <?php
     } //end if
