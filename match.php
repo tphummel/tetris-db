@@ -1,26 +1,22 @@
 <?php
 
-require_once ( __DIR__ . "/config/db.php" ) ;
 require_once ( __DIR__ . "/lib/grade.php" ) ;
 require_once ( __DIR__ . "/lib/points.inc.php" ) ;
 require_once ( __DIR__ . "/lib/rankings.php" ) ;
 require_once ( __DIR__ . "/lib/rules.php" ) ;
 require_once ( __DIR__ . "/lib/statPower.php" ) ;
 require_once ( __DIR__ . "/lib/redis.php" ) ;
-
-$connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
-if ( !$connection ) {
-  die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
-}
-
-$db_select = mysql_select_db ( $db_database, $connection );
-if ( !$db_select ) {
-  die ( "Could not select the database: <br />". mysql_error ( ) );
-}
-
 require_once ( __DIR__  . "/lib/helper.php" ) ;
 
-if ( array_key_exists ( 'player1', $_POST ) ) {
+$prevSavedMatch = null ;
+
+if ( array_key_exists('action', $_GET ) && $_GET['action'] === 'add' ) {
+	$matchToSave = true;
+} else {
+	$matchToSave = false ;
+}
+
+if ( $matchToSave ) {
   unset ( $players ) ;
   $players = Helper::cleanPlayers ( $_POST ) ;
 
@@ -32,17 +28,6 @@ if ( array_key_exists ( 'player1', $_POST ) ) {
 
   $location = $_POST [ "location" ] ;
   $note = $_POST [ "note" ] ;
-
-}
-$prevSavedMatch = null ;
-
-if ( array_key_exists('action', $_GET ) && $_GET['action'] === 'add' ) {
-	$matchToSave = true;
-} else {
-	$matchToSave = false ;
-}
-
-if ( $matchToSave ) {
 
   $valid = Rules::validateMatch ( $players ) ;
 
@@ -92,28 +77,17 @@ if ( $matchToSave ) {
 
 //this happens on every load
 //clear post data for start of new match
-$tempPlayers = array();
-
-// put $players in display order as $users
-if ( isset ( $orderedPlayerNames ) ) {
-  foreach ( $orderedPlayerNames as $ogp ) {
-    foreach ( $players as $p ) {
-      if ( $ogp == $p [ 0 ] ) {
-        $tempPlayers[] = $p;
-      }
-    }
-  }
-} else {
-  for ( $i = 0 ; $i < 4 ; $i++ ) {
-    $user = array ( "", "", "", "", "", "" ) ;
-    $tempPlayers [ $i ] = $user ;
-  }
-}
-
-$players = $tempPlayers;
-
 for ($q = 1; $q <= 4; $q++) {
   unset ( $_POST [ "player" . $q ] ) ;
+}
+
+if ( $prevSavedMatch ) {
+  $players = $erankedInDisplayOrder ;
+} else {
+  for ( $i = 0 ; $i < 4 ; $i++ ) {
+    $players = array ( ) ;
+    $players[] = array ( "", "", "", "", "", "" ) ;
+  }
 }
 
 showConsole( $players, $prevSavedMatch, "", "", "", "" ) ;
@@ -573,7 +547,6 @@ function showConsole ( $users, $prevSavedMatch, $errorMsg, $errorRegion, $locati
     <tr><td align="center" colspan="5"><input type="submit" value="Submit"></td></tr>
     </table>
     </form>
-
 
   <?php
   include_once( __DIR__ . "/templates/footer.php");
