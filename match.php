@@ -130,11 +130,7 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
 
   if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
     ?>
-    <div class="errortext">
-      <?php
-        echo $errorMsg ;
-      ?>
-    </div>
+    <div class="errortext"><?= $errorMsg ?></div>
 <?php
   }
 ?>
