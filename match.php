@@ -49,7 +49,7 @@ if ( $matchToSave ) {
   //reshow form with highlights if error is caught
   if( $valid [ "isValid" ] == false ) {
     $errorRegion = true ;
-    showConsole ( $players, $connection, null, $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
+    showConsole ( $players, null, $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
     exit();
   }
 
@@ -116,15 +116,27 @@ for ($q = 1; $q <= 4; $q++) {
   unset ( $_POST [ "player" . $q ] ) ;
 }
 
-showConsole( $players, $connection, $prevSavedMatch, "", "", "", "" ) ;
+showConsole( $players, $prevSavedMatch, "", "", "", "" ) ;
 
 /*
 ==========================================================================================
 ==========================================================================================
 */
-function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
+function showConsole ( $users, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
   $title = "The New Tetris - Match Console" ;
+
   require_once ( __DIR__ . "/templates/header.php" ) ;
+  require ( __DIR__ . "/config/db.php" ) ;
+
+  $connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
+  if ( !$connection ) {
+    die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
+  }
+
+  $db_select = mysql_select_db ( $db_database, $connection );
+  if ( !$db_select ) {
+    die ( "Could not select the database: <br />". mysql_error ( ) );
+  }
 
   $errCssClass =  ' class="errorLocation"' ;
 
