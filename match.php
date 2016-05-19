@@ -532,11 +532,15 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       $result = mysql_query($query, $connection) or die(mysql_error());
       $data = mysql_fetch_array($result);
 
+      $exp = $data["exp"];
       $games = $data["games"];
       $time = $data["time"];
       $lines = $data["lines"];
+
       $winPoints = $data["wpts"];
+      $wrank = $data["wrank"];
       $effPoints = $data["epts"];
+      $erank = $data["erank"];
 
       $minutes = intval($time/60);
       $seconds = str_pad($time - $minutes*60,2,"0", STR_PAD_LEFT);
@@ -544,25 +548,27 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
       $timeDisp = $minutes . ":" . $seconds;
 
       $lpsRaw = ($time > 0 ? $lines / $time : 0);
-      $lps = number_format($lpsRaw,3) . " (" .$lines." / ". $time . ")";
+      $lps = number_format($lpsRaw,3);
 
       $lpgRaw = ($time > 0 ? $lines / $games : 0);
-      $lpg = number_format($lpgRaw,2) . " (" .$lines." / ".$games.")";
+      $lpg = number_format($lpgRaw,2);
 
-      $eptsg = number_format(($games > 0 ? $effPoints/$games : 0),3);
-      // $eptsg .= " (" .$data["e1"].")"
-      $wptsg = number_format(($games > 0 ? $winPoints/$games : 0),3);
+      $eRec = implode("-", array($data["e1"],$data["e2"],$data["e3"],$data["e4"]));
+      $ePct = number_format(($exp > 0 ? $effPoints/$exp : 0),3);
+
+      $wRec = implode("-", array($data["w1"],$data["w2"],$data["w3"],$data["w4"]));
+      $wPct = number_format(($exp > 0 ? $winPoints/$exp : 0),3);
 
       //lib/statPower.php
-      $power = computePower($wptsg, $eptsg, $lps);
+      $power = computePower($winPoints/$games, $effPoints/$games, $lps);
 
       ?>
       <table align="center">
-      <tr><td>G (Time)</td><td><?= $games . " (" . $timeDisp . ")"; ?></td></tr>
-      <tr><td>Li / Sec</td><td><?= $lps; ?></td></tr>
-      <tr><td>Li / Game</td><td><?= $lpg; ?></td></tr>
-      <tr><td>W-PTS/G</td><td><?= $wptsg; ?></td></tr>
-      <tr><td>E-PTS/G</td><td><?= $eptsg; ?></td></tr>
+      <tr><td>G (Time)</td><td><?= $games ?></td><td><?=" (" . $timeDisp . ")" ?></td></tr>
+      <tr><td>Li / Sec</td><td><?= $lps; ?></td><td><?=" (" .$lines." / ". $time . ")" ?></td></tr>
+      <tr><td>Li / G</td><td><?= $lpg; ?></td><td><?= " (" .$lines." / ".$games.")" ?></td></tr>
+      <tr><td>Win Pct</td><td><?= $wPct; ?></td><td><?= " (" . $wRec . ")" ?></td></tr>
+      <tr><td>Eff Pct</td><td><?= $ePct; ?></td><td><?= " (" . $eRec . ")" ?></td></tr>
       <tr>
         <td>
           <a href="https://github.com/tphummel/tetris-db/blob/master/lib/statPower.php" target="_blank">Power</a>
