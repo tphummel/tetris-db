@@ -105,6 +105,49 @@ class Helper {
     file_put_contents ( $logFile , $line, FILE_APPEND ) ;
 
   }
+
+  public static function saveMatch ( $match ) {
+    require ( __DIR__ . "/../config/db.php" ) ;
+
+    $connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
+    if ( !$connection ) {
+      die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
+    }
+
+    $db_select = mysql_select_db ( $db_database, $connection );
+    if ( !$db_select ) {
+      die ( "Could not select the database: <br />". mysql_error ( ) );
+    }
+
+    $nowdate = date ( "Y-m-d" ) ;
+    $nowstamp = date ( "Y-m-d H:i:s" ) ;
+
+    $insertTM = "
+      INSERT INTO tntmatch VALUES
+      (NULL, '" . $nowdate . "', '" . $nowstamp . "', 4,
+        (SELECT locationid from location where locationname = '" . $match["location"] . "'),
+      '" . $match["note"] . "', 1)" ;
+
+    mysql_query ( $insertTM, $connection ) or die ( "error with tnt match insert: ". mysql_error() ) ;
+
+    //Create PlayerMatch Records
+    $matchId = mysql_insert_id ( ) ;
+
+    $insertPM = "INSERT INTO playermatch VALUES ";
+    foreach ( $match["players"] as $player ) {
+      $insertPM = $insertPM . "(" . $matchId . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
+                        $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), ";
+
+    }
+    $insertPM_trimmed = rtrim($insertPM, ", ");
+
+    mysql_query($insertPM_trimmed, $connection) or die("error with playermatch insert: " . mysql_error());
+
+    $match["id"] = $matchId ;
+    $match["ts"] = $nowStamp ;
+
+    return $match;
+  }
 }
 
 

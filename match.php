@@ -58,31 +58,22 @@ if ( $matchToSave ) {
   $wrankedPlayers = Rankings::setWinRanks ( $players ) ;
   $erankedPlayers = Rankings::setEffRanks ( $wrankedPlayers ) ;
 
-  //Create TNTMatch Record
+  $match = [
+    "location" => $location,
+    "note" => $note,
+    "players" => $erankedPlayers
+  ];
 
-  $nowdate = date ( "Y-m-d" ) ;
-  $nowstamp = date ( "Y-m-d H:i:s" ) ;
+  $prevSavedMatch = Helper::saveMatch ( $match ) ;
 
-  $insertTM = "
-    INSERT INTO tntmatch VALUES
-    (NULL, '" . $nowdate . "', '" . $nowstamp . "', 4,
-      (SELECT locationid from location where locationname = '" . $location . "'),
-    '" . $note . "', 1)" ;
-
-  mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
-
-  //Create PlayerMatch Records
-  $matchId = mysql_insert_id ( ) ;
-
-  $insertPM = "INSERT INTO playermatch VALUES ";
-  foreach ( $erankedPlayers as $player ) {
-    $insertPM = $insertPM . "(" . $matchId . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
-                      $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), ";
-
+  if ( !array_key_exists("session-match-id-inclusive", $_COOKIE) ) {
+    setcookie(
+      "session-match-id-inclusive",
+      $prevSavedMatch["id"],
+      null, // session expiration
+      "/match.php"
+    ) ;
   }
-  $insertPM_trimmed = rtrim($insertPM, ", ");
-
-  mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
 
   $erankedInDisplayOrder = array ( ) ;
   foreach ($orderedPlayerNames as $orderedName) {
@@ -91,20 +82,6 @@ if ( $matchToSave ) {
         $erankedInDisplayOrder[] = $erankedPlayer ;
       }
     }
-  }
-  $prevSavedMatch = [
-    "id" => $matchId,
-    "ts" => $nowstamp,
-    "players" => $erankedInDisplayOrder
-  ] ;
-
-  if ( !array_key_exists("session-match-id-inclusive", $_COOKIE) ) {
-    setcookie(
-      "session-match-id-inclusive",
-      $matchId,
-      null, // session expiration
-      "/match.php"
-    ) ;
   }
 
   foreach ( $erankedPlayers as $perf ) {
