@@ -1,26 +1,22 @@
 <?php
 
-require_once ( __DIR__ . "/config/db.php" ) ;
 require_once ( __DIR__ . "/lib/grade.php" ) ;
 require_once ( __DIR__ . "/lib/points.inc.php" ) ;
 require_once ( __DIR__ . "/lib/rankings.php" ) ;
 require_once ( __DIR__ . "/lib/rules.php" ) ;
 require_once ( __DIR__ . "/lib/statPower.php" ) ;
 require_once ( __DIR__ . "/lib/redis.php" ) ;
-
-$connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
-if ( !$connection ) {
-  die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
-}
-
-$db_select = mysql_select_db ( $db_database, $connection );
-if ( !$db_select ) {
-  die ( "Could not select the database: <br />". mysql_error ( ) );
-}
-
 require_once ( __DIR__  . "/lib/helper.php" ) ;
 
-if ( array_key_exists ( 'player1', $_POST ) ) {
+$prevSavedMatch = null ;
+
+if ( array_key_exists('action', $_GET ) && $_GET['action'] === 'add' ) {
+	$matchToSave = true;
+} else {
+	$matchToSave = false ;
+}
+
+if ( $matchToSave ) {
   unset ( $players ) ;
   $players = Helper::cleanPlayers ( $_POST ) ;
 
@@ -33,23 +29,12 @@ if ( array_key_exists ( 'player1', $_POST ) ) {
   $location = $_POST [ "location" ] ;
   $note = $_POST [ "note" ] ;
 
-}
-$prevSavedMatch = null ;
-
-if ( array_key_exists('action', $_GET ) && $_GET['action'] === 'add' ) {
-	$matchToSave = true;
-} else {
-	$matchToSave = false ;
-}
-
-if ( $matchToSave ) {
-
   $valid = Rules::validateMatch ( $players ) ;
 
   //reshow form with highlights if error is caught
   if( $valid [ "isValid" ] == false ) {
     $errorRegion = true ;
-    showConsole ( $players, $connection, null, $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
+    showConsole ( $players, null, $valid [ "errMsg" ], $errorRegion, $location, $note ) ;
     exit();
   }
 
@@ -58,31 +43,22 @@ if ( $matchToSave ) {
   $wrankedPlayers = Rankings::setWinRanks ( $players ) ;
   $erankedPlayers = Rankings::setEffRanks ( $wrankedPlayers ) ;
 
-  //Create TNTMatch Record
+  $match = [
+    "location" => $location,
+    "note" => $note,
+    "players" => $erankedPlayers
+  ];
 
-  $nowdate = date ( "Y-m-d" ) ;
-  $nowstamp = date ( "Y-m-d H:i:s" ) ;
+  $prevSavedMatch = Helper::saveMatch ( $match ) ;
 
-  $insertTM = "
-    INSERT INTO tntmatch VALUES
-    (NULL, '" . $nowdate . "', '" . $nowstamp . "', 4,
-      (SELECT locationid from location where locationname = '" . $location . "'),
-    '" . $note . "', 1)" ;
-
-  mysql_query ( $insertTM, $connection ) or die ( mysql_error() ) ;
-
-  //Create PlayerMatch Records
-  $matchId = mysql_insert_id ( ) ;
-
-  $insertPM = "INSERT INTO playermatch VALUES ";
-  foreach ( $erankedPlayers as $player ) {
-    $insertPM = $insertPM . "(" . $matchId . ", (SELECT playerid from player where username = '" . $player[0] . "')," .
-                      $player[1] . ", " . $player[4] . ", " . $player[5] . ", " . $player[7] . "), ";
-
+  if ( !array_key_exists("session-match-id-inclusive", $_COOKIE) ) {
+    setcookie(
+      "session-match-id-inclusive",
+      $prevSavedMatch["id"],
+      null, // session expiration
+      "/match.php"
+    ) ;
   }
-  $insertPM_trimmed = rtrim($insertPM, ", ");
-
-  mysql_query($insertPM_trimmed, $connection) or die(mysql_error());
 
   $erankedInDisplayOrder = array ( ) ;
   foreach ($orderedPlayerNames as $orderedName) {
@@ -91,20 +67,6 @@ if ( $matchToSave ) {
         $erankedInDisplayOrder[] = $erankedPlayer ;
       }
     }
-  }
-  $prevSavedMatch = [
-    "id" => $matchId,
-    "ts" => $nowstamp,
-    "players" => $erankedInDisplayOrder
-  ] ;
-
-  if ( !array_key_exists("session-match-id-inclusive", $_COOKIE) ) {
-    setcookie(
-      "session-match-id-inclusive",
-      $matchId,
-      null, // session expiration
-      "/match.php"
-    ) ;
   }
 
   foreach ( $erankedPlayers as $perf ) {
@@ -115,49 +77,46 @@ if ( $matchToSave ) {
 
 //this happens on every load
 //clear post data for start of new match
-$tempPlayers = array();
-
-// put $players in display order as $users
-if ( isset ( $orderedPlayerNames ) ) {
-  foreach ( $orderedPlayerNames as $ogp ) {
-    foreach ( $players as $p ) {
-      if ( $ogp == $p [ 0 ] ) {
-        $tempPlayers[] = $p;
-      }
-    }
-  }
-} else {
-  for ( $i = 0 ; $i < 4 ; $i++ ) {
-    $user = array ( "", "", "", "", "", "" ) ;
-    $tempPlayers [ $i ] = $user ;
-  }
-}
-
-$players = $tempPlayers;
-
 for ($q = 1; $q <= 4; $q++) {
   unset ( $_POST [ "player" . $q ] ) ;
 }
 
-showConsole( $players, $connection, $prevSavedMatch, "", "", "", "" ) ;
+if ( $prevSavedMatch ) {
+  $players = $erankedInDisplayOrder ;
+} else {
+  for ( $i = 0 ; $i < 4 ; $i++ ) {
+    $players = array ( ) ;
+    $players[] = array ( "", "", "", "", "", "" ) ;
+  }
+}
+
+showConsole( $players, $prevSavedMatch, "", "", "", "" ) ;
 
 /*
 ==========================================================================================
 ==========================================================================================
 */
-function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
+function showConsole ( $users, $prevSavedMatch, $errorMsg, $errorRegion, $location, $note) {
   $title = "The New Tetris - Match Console" ;
+
   require_once ( __DIR__ . "/templates/header.php" ) ;
+  require ( __DIR__ . "/config/db.php" ) ;
+
+  $connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
+  if ( !$connection ) {
+    die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
+  }
+
+  $db_select = mysql_select_db ( $db_database, $connection );
+  if ( !$db_select ) {
+    die ( "Could not select the database: <br />". mysql_error ( ) );
+  }
 
   $errCssClass =  ' class="errorLocation"' ;
 
   if ( !empty ( $errorMsg ) AND !empty ( $errorRegion ) ) {
     ?>
-    <div class="errortext">
-      <?php
-        echo $errorMsg ;
-      ?>
-    </div>
+    <div class="errortext"><?= $errorMsg ?></div>
 <?php
   }
 ?>
@@ -588,7 +547,6 @@ function showConsole ( $users, $connection, $prevSavedMatch, $errorMsg, $errorRe
     <tr><td align="center" colspan="5"><input type="submit" value="Submit"></td></tr>
     </table>
     </form>
-
 
   <?php
   include_once( __DIR__ . "/templates/footer.php");
