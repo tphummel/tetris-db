@@ -462,7 +462,7 @@ class MatchConsole {
       </form>
 
     <?php
-    include_once( __DIR__ . "/templates/footer.php");
+    include_once( __DIR__ . "/../templates/footer.php");
     ?>
     </body>
     </html>
