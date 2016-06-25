@@ -8,6 +8,21 @@ web scripts for collecting and viewing Tetris data from The New Tetris on Ninten
 
     ./bin/test
 
+## Screenshots
+
+![Index](https://i.imgur.com/25KInQR.png)
+![Match Entry Console](https://i.imgur.com/7UcwfxT.png)
+![Summary Report](https://i.imgur.com/1HoJnlz.png)
+![Individual Report Options](http://i.imgur.com/u4GFseg.png)
+![Individual Report](http://i.imgur.com/zaIx17V.png)
+![Calendar Collection Report](http://i.imgur.com/wbKtR6o.png)
+![Lines Collection Report](http://i.imgur.com/vAGWbyQ.png)
+![Match Strength report](http://i.imgur.com/3ZYUojk.png)
+![Performance Rarity Report](http://i.imgur.com/pQsmI4V.png)
+![Win Expectancy Report](http://i.imgur.com/mp4ip0M.png)
+
+
+
 ### Routes/Views
 - index.php
 - match.php
