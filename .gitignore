@@ -1,6 +1,5 @@
-config/db.php
 include/DB*
-data/tnt*.sql
+*data*.sql
 python-report/
 .vagrant/
 log/

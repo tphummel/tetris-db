@@ -21,7 +21,39 @@ web scripts for collecting and viewing Tetris data from The New Tetris on Ninten
 ![Performance Rarity Report](http://i.imgur.com/pQsmI4V.png)
 ![Win Expectancy Report](http://i.imgur.com/mp4ip0M.png)
 
+### run locally with docker
 
+```
+docker run --rm -it -e -p 9000:80 dokku/tetris-db:0.12.0
+```
+browse: http://localhost:9000
+
+### app/db initial installation
+
+```
+# create app
+ssh tom@dokku.dev "dokku apps:create tetris-db"
+
+# create db
+ssh tom@dokku.dev "sudo dokku plugin:install https://github.com/dokku/dokku-mariadb.git mariadb"
+ssh tom@dokku.dev "dokku mariadb:create tetris-db"
+
+# load data snapshot into db
+aws --profile personal s3 cp s3://tph-etc/tetris-data/tnt.sql .
+scp tnt-data.sql tom@dokku.dev:~/
+ssh tom@dokku.dev "dokku mariadb:import tetris-db < tnt-data.sql"
+
+# link db to app
+dokku mariadb:link tetris-db tetris-db
+```
+
+### build/release
+
+```
+docker build . -t dokku/tetris-db:0.12.0
+docker save dokku/tetris-db:0.12.0 | bzip2 | ssh tom@dokku.dev "bunzip2 | sudo docker load"
+ssh tom@dokku.dev "dokku tags:deploy tetris-db 0.12.0"
+```
 
 ### Routes/Views
 - index.php
@@ -52,24 +84,3 @@ rptCollabOld.php
 editmatch.php
 manageplayer.php
 include/location, match, player, playermatch
-
-
----
-
-
-## provision
-
-/usr/bin/mysql_secure_installation
-
-https://www.digitalocean.com/community/articles/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-12-04
-
-git clone tnt
-create db, create user, load data
-
-create database tnt;
-create user 'tnt'@'localhost' identified by 'tnt';
-grant all on tnt.* to 'tnt'@'localhost';
-
-write db_config.php
-write nginx config
-remove default nginx
