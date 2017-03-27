@@ -55,6 +55,17 @@ docker save dokku/tetris-db:0.12.0 | bzip2 | ssh tom@dokku.dev "bunzip2 | sudo d
 ssh tom@dokku.dev "dokku tags:deploy tetris-db 0.12.0"
 ```
 
+### tls
+
+```
+ssh tom@dokku.dev "sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git"
+
+ssh tom@dokku.dev "dokku config:set --no-restart tetris-db DOKKU_LETSENCRYPT_EMAIL=tphummel@gmail.com"
+
+ssh tom@dokku.dev "dokku letsencrypt tetris-db"
+
+```
+
 ### Routes/Views
 - index.php
 - match.php
