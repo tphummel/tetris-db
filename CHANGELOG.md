@@ -1,4 +1,16 @@
 
+0.13.0 / 2017-03-26
+==================
+
+  * mvp of new docker-based workflow
+  * targeting dokku for deployment
+  * update database config to use env var `DATABASE_URL`
+  * Merge pull request #14 from tphummel/demo-screenshots
+  * readme: added example screenshot images
+  * Merge branch 'match-form-split'
+  * Merge branch 'match-console-fn-splits'
+  * Merge branch 'console-summary-upgrade'
+
 0.12.0 / 2016-04-24
 ==================
 
