@@ -7,18 +7,9 @@ require_once("lib/points.inc.php");
 require_once("lib/grade.php");
 require_once("lib/statPower.php");
 
-$connection = mysql_connect($db_host, $db_username, $db_password);
-    if(!$connection)
-        {
-            die ("Could not connect to the database: <br />". mysql_error());
-        }
-        
-
-        $db_select = mysql_select_db($db_database, $connection);
-        if (!$db_select)
-        {
-            die ("Could not select the database: <br />". mysql_error());
-        }
+$mysqli = mysqli_init();
+$mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+$mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
 $match = -1;
 if (isset($_GET["matchid"]))
@@ -34,8 +25,8 @@ $select1 = "
   FROM tntmatch m, location l
   WHERE matchid=" . $match .
   " AND l.locationid = m.location";
-$result1 = mysql_query($select1, $connection) or die(mysql_error());
-$sumData = mysql_fetch_array($result1);
+$result1 = $mysqli->query($select1);
+$sumData = $result1->fetch_array();
 $matchid = $sumData["matchid"];
 $matchdate = new DateTime($sumData["matchdate"]);
 $pCt = $sumData["pCt"];
@@ -44,7 +35,8 @@ $select2 = "select pm.lines, pm.time, pm.wrank, pm.erank, p.username, pm.playeri
 (select count(playerid) from playermatch where matchid = pm.matchid) as pCt
 FROM playermatch pm, player p where p.playerid = pm.playerid and matchid=" . $match . " order by wrank asc";
 
-$result2 = mysql_query($select2, $connection) or die(mysql_error());
+$result2 = $mysqli->query($select2);
+$mysqli->close();
 
 ?>
 <div class="report">
@@ -66,7 +58,7 @@ $result2 = mysql_query($select2, $connection) or die(mysql_error());
 </tr>
 
 <?php //each player in match
-while ($row = mysql_fetch_array($result2))
+while ($row = $result2->fetch_array())
 {
   $playerid = $row["playerid"];
   $name = $row["username"];
