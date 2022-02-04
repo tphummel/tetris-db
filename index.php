@@ -5,39 +5,29 @@ require_once "templates/header.php";
 require_once "config/db.php";
 //require_once("http://thenewtetris.freehostia.com/dblogin.php");
 
-    //create connection obj
-    $connection = mysql_connect($db_host, $db_username, $db_password);
-    if(!$connection)
-        {
-            die ("Could not connect to the database: <br />". mysql_error());
-        }
-
-
-        $db_select = mysql_select_db($db_database, $connection);
-        if (!$db_select)
-        {
-            die ("Could not select the database: <br />". mysql_error());
-        }
+    $mysqli = mysqli_init();
+    $mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+    $mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
     //get total matches
     $query = "SELECT count(matchid) as totMatches FROM tntmatch";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $totMatches = mysql_result($result, 0, 'totMatches');
+    $result = $mysqli->query($query);
+    $totMatches = $result->fetch_assoc()['totMatches'];
 
     //get total performances
     $query = "SELECT count(matchid) as totPerfs FROM playermatch";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $totPerfs = mysql_result($result, 0, 'totPerfs');
+    $result = $mysqli->query($query);
+    $totPerfs = $result->fetch_assoc()['totPerfs'];
 
     //get total players
     $query = "SELECT count(playerid) as totPlayers FROM player";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $totPlayers = mysql_result($result, 0, 'totPlayers');
+    $result = $mysqli->query($query);
+    $totPlayers = $result->fetch_assoc()['totPlayers'];
 
     //get total time
     $query = "SELECT sum(time) as totTime FROM playermatch";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $totTime = mysql_result($result, 0, 'totTime');
+    $result = $mysqli->query($query);
+    $totTime = $result->fetch_assoc()['totTime'];
     $day = intval($totTime/86400);
     $hr = intval(($totTime - ($day*86400))/3600);
     $min = intval(($totTime - ($day*86400) - ($hr*3600))/60);
@@ -46,50 +36,52 @@ require_once "config/db.php";
 
     //get total lines
     $query = "SELECT sum(pm.lines) as totLines FROM playermatch pm";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $totLines = mysql_result($result, 0, 'totLines');
+    $result = $mysqli->query($query);
+    $totLines = $result->fetch_assoc()['totLines'];
 
     //get 2p perfs
     $query = "select count(p.matchid)
 from playermatch p
 where (select count(playerid) from playermatch where matchid = p.matchid) = 2";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $p2Ct = mysql_result($result, 0);
+    $result = $mysqli->query($query);
+    $p2Ct = $result->fetch_array()[0];
 
     //get 3p perfs
     $query = "select count(p.matchid)
 from playermatch p
 where (select count(playerid) from playermatch where matchid = p.matchid) = 3";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $p3Ct = mysql_result($result, 0);
+    $result = $mysqli->query($query);
+    $p3Ct = $result->fetch_array()[0];
 
     //get 4p perfs
     $query = "select count(p.matchid)
 from playermatch p
 where (select count(playerid) from playermatch where matchid = p.matchid) = 4";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $p4Ct = mysql_result($result, 0);
+    $result = $mysqli->query($query);
+    $p4Ct = $result->fetch_array()[0];
 
     //get 2p matches
     $query = "select count(m.matchid)
 from tntmatch m
 where (select count(playerid) from playermatch where matchid = m.matchid) = 2";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $p2CtM = mysql_result($result, 0);
+    $result = $mysqli->query($query);
+    $p2CtM = $result->fetch_array()[0];
 
     //get 3p matches
     $query = "select count(m.matchid)
 from tntmatch m
 where (select count(playerid) from playermatch where matchid = m.matchid) = 3";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $p3CtM = mysql_result($result, 0);
+    $result = $mysqli->query($query);
+    $p3CtM = $result->fetch_array()[0];
 
     //get 2p matches
     $query = "select count(m.matchid)
 from tntmatch m
 where (select count(playerid) from playermatch where matchid = m.matchid) = 4";
-    $result = mysql_query($query, $connection) or die(mysql_error());
-    $p4CtM = mysql_result($result, 0);
+    $result = $mysqli->query($query);
+    $p4CtM = $result->fetch_array()[0];
+
+    $mysqli->close();
 
 $version = file_get_contents("VERSION");
 ?>

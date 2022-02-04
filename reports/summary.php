@@ -10,17 +10,9 @@ require_once($dir . "/../config/db.php");
 require_once($dir . "/../lib/points.inc.php");
 require_once($dir . "/../lib/statPower.php");
 
-//create connection obj
-$connection = mysql_connect($db_host, $db_username, $db_password);
-if(!$connection){
-  die ("Could not connect to the database: <br />". mysql_error());
-}
-
-
-$db_select = mysql_select_db($db_database, $connection);
-if (!$db_select) {
-  die ("Could not select the database: <br />". mysql_error());
-}
+$mysqli = mysqli_init();
+$mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+$mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
 ?>
 <div class="report">
@@ -61,8 +53,8 @@ if (isset($_GET['sDate']) && isset($_GET['eDate']))
 <?php
 //get data for each player
     $query = "SELECT playerid FROM player";
-    $resultUser = mysql_query($query, $connection) or die(mysql_error());
-    while ($dataU = mysql_fetch_array($resultUser))
+    $resultUser = $mysqli->query($query);
+    while ($dataU = $resultUser->fetch_array())
       {
       $player = $dataU["playerid"];
 
@@ -77,8 +69,8 @@ and pm.playerid = p.playerid
 and pm.matchid = m.matchid
 group by pm.playerid";
 
-    $resultSum = mysql_query($queryR, $connection) or die(mysql_error());
-    $dataR = mysql_fetch_array($resultSum);
+    $resultSum = $mysqli->query($queryR);
+    $dataR = $resultSum->fetch_array();
 
     if(empty($dataR)) // if a user has no records that match criteria
     {
@@ -116,12 +108,12 @@ group by pm.playerid";
     AND pm.playerid = " . $player . "
     AND m.matchdate between '" . $startDate . "' AND '" . $endDate . "'";
 
-    $resultLines = mysql_query($queryL, $connection) or die(mysql_error());
+    $resultLines = $mysqli->query($queryL);
 
     $epts = 0;
     $wpts = 0;
 
-      while ($rec = mysql_fetch_array($resultLines))
+      while ($rec = $resultLines->fetch_array())
         {
         $i = $rec["pCt"];
         $win = $rec["wrank"];
@@ -169,8 +161,8 @@ for ($i = 4; $i >=2; $i--)
 
     //get data for each player
     $query = "SELECT playerid FROM player";
-    $resultUser = mysql_query($query, $connection) or die(mysql_error());
-    while ($dataU = mysql_fetch_array($resultUser))
+    $resultUser = $mysqli->query($query);
+    while ($dataU = $resultUser->fetch_array())
       {
       $player = $dataU["playerid"];
 
@@ -186,8 +178,8 @@ and pm.playerid = p.playerid
 and pm.matchid = m.matchid
 group by pm.playerid";
 
-      $resultSum = mysql_query($queryR, $connection) or die(mysql_error());
-      $dataR = mysql_fetch_array($resultSum);
+      $resultSum = $mysqli->query($queryR);
+      $dataR = $resultSum->fetch_array();
 
       if(empty($dataR)) // if a user has no records that match criteria
       {
@@ -226,11 +218,11 @@ group by pm.playerid";
     AND pm.playerid = " . $player . "
     AND m.matchdate between '" . $startDate . "' AND '" . $endDate . "'";
 
-      $resultLines = mysql_query($queryL, $connection) or die(mysql_error());
+      $resultLines = $mysqli->query($queryL);
 
       $epts = 0;
       $wpts = 0;
-        while ($rec = mysql_fetch_array($resultLines))
+        while ($rec = $resultLines->fetch_array())
           {
         //$i = playerCount
         $win = $rec["wrank"];
@@ -262,9 +254,8 @@ group by pm.playerid";
 
 }//end for - matchtype loop
 
-
-
 }//end report body if
+$mysqli->close();
 ?>
 </div>
 <?php

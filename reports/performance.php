@@ -11,17 +11,9 @@ require_once($dir . "/../lib/points.inc.php");
 require_once($dir . "/../lib/grade.php");
 require_once($dir . "/../lib/statPower.php");
 
-$connection = mysql_connect($db_host, $db_username, $db_password);
-if(!$connection){
-    die ("Could not connect to the database: <br />". mysql_error());
-}
-
-$db_select = mysql_select_db($db_database, $connection);
-if (!$db_select){
-    die ("Could not select the database: <br />". mysql_error());
-}
-
-
+$mysqli = mysqli_init();
+$mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+$mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
 $rptOptions = array(
 "Most Lines",
@@ -472,7 +464,7 @@ if(array_key_exists("rptEnd",$_GET)){
       LIMIT " . $rptRecs;
     break;
 }
-$result = mysql_query($select, $connection) or die(mysql_error());
+$result = $mysqli->query($select);
 $colspan = 13;
 ?>
 
@@ -499,7 +491,7 @@ $colspan = 13;
 
 <?php
 $ct = 1;
-while ($row = mysql_fetch_array($result))
+while ($row = $result->fetch_array())
 {
   $mid = $row["matchid"];
   $date = date("m/d/y", strtotime($row["matchdate"]));
@@ -546,6 +538,7 @@ while ($row = mysql_fetch_array($result))
   echo '</tr>';
   $ct++;
 }
+$mysqli->close();
 
 ?>
 

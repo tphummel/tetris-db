@@ -4,16 +4,9 @@ include_once "templates/header.php" ;
 
 require_once("config/db.php");
 
-$connection = mysql_connect($db_host, $db_username, $db_password);
-if(!$connection){
-    die ("Could not connect to the database: <br />". mysql_error());
-}
-
-$db_select = mysql_select_db($db_database, $connection);
-if (!$db_select){
-    die ("Could not select the database: <br />". mysql_error());
-}
-
+$mysqli = mysqli_init();
+$mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+$mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
 if (isset($_GET["playerid"])){
   $player = $_GET["playerid"];
@@ -22,9 +15,9 @@ if (isset($_GET["playerid"])){
 
 $select1 = "SELECT * FROM player where playerid=" . $player;
 
-$result1 = mysql_query($select1, $connection) or die(mysql_error());
+$result1 = $mysqli->query($select1);
 
-$playerdata = mysql_fetch_array($result1);
+$playerdata = $result1->fetch_array();
 
 $first = $playerdata["firstname"];
 $last = $playerdata["lastname"];
@@ -56,9 +49,10 @@ and m.matchid = pm.matchid
 GROUP BY m.matchdate
 ORDER BY m.matchdate DESC";
 
-$result2 = mysql_query($select2, $connection) or die(mysql_error());
+$result2 = $mysqli->query($select2);
+$mysqli->close();
 
-while($row = mysql_fetch_array($result2))
+while($row = $result2->fetch_array())
 {
   $date = $row["matchdate"];
   $games = $row["games"];

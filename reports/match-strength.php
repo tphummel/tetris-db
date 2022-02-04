@@ -8,17 +8,10 @@ require_once($dir . "/../lib/points.inc.php");
 require_once($dir . "/../lib/grade.php");
 require_once($dir . "/../lib/statPower.php");
 
-//create connection obj
-    $connection = mysql_connect($db_host, $db_username, $db_password);
-    if(!$connection){
-      die ("Could not connect to the database: <br />". mysql_error());
-    }
+    $mysqli = mysqli_init();
+    $mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+    $mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
-
-    $db_select = mysql_select_db($db_database, $connection);
-    if (!$db_select){
-      die ("Could not select the database: <br />". mysql_error());
-    }
     // initializing to null, will return false from isset below if not set
     $startDate = NULL;
     $endDate = NULL;
@@ -147,10 +140,9 @@ require_once($dir . "/../lib/statPower.php");
           break;
 
         }//close switch sort
-        //added to appease error on byethost.com
-        mysql_query("SET OPTION SQL_BIG_SELECTS=1");
-        $result = mysql_query($query, $connection) or die(mysql_error());
-        $data = mysql_fetch_array($result);
+
+        $result = $mysqli->query($query);
+        $mysqli->close();
         //echo $query;
         ?>
         <table border="1" cellpadding="4" cellspacing="0">
@@ -194,7 +186,7 @@ require_once($dir . "/../lib/statPower.php");
         <?php
 
         $rowCount = 1;
-        while ($row = mysql_fetch_array($result)){
+        while ($row = $result->fetch_array()) {
           ?>
           <td class="data"><?php echo $rowCount; ?></td>
           <td class="data"><a href="/matchinfo.php?matchid=<?php echo $row['matchid']; ?>" ><?php echo $row['matchid']; ?></a></td>

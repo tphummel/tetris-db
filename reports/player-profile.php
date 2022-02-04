@@ -56,7 +56,7 @@ function organizeData ( $data, $mode ) {
 
   $final = array ( ) ;
 
-  while ( $row = mysql_fetch_array ( $data, MYSQL_ASSOC ) ) {
+  while ( $row = $data->fetch_array(MYSQLI_ASSOC) ) {
     $final [ $row [ $mode ] ] = array ( ) ;
     $li =& $final[ $row [ $mode ] ] ;
 
@@ -215,14 +215,9 @@ function printCompletion ( $rawCompletions ) {
 function printCalendarReport ( $player ) {
   require ( dirname ( __FILE__ ) . "/../config/db.php");
 
-  $connection = mysql_connect($db_host, $db_username, $db_password);
-  if(!$connection){
-    die ("Could not connect to the database: <br />". mysql_error());
-  }
-  $db_select = mysql_select_db($db_database, $connection);
-  if (!$db_select){
-    die ("Could not select the database: <br />". mysql_error());
-  }
+  $mysqli = mysqli_init();
+  $mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+  $mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
   $sql = "
     SELECT MONTH(matchdate)          AS mon,
@@ -241,11 +236,11 @@ function printCalendarReport ( $player ) {
                    AND p.playerid = $player) a
     GROUP  BY mon, day" ;
 
-  $result = mysql_query($sql, $connection) or die(mysql_error());
+  $result = $mysqli->query($sql);
 
   $calendar = getEmptyCalendar ( ) ;
 
-  while ( $row = mysql_fetch_array ( $result, MYSQL_ASSOC ) ) {
+  while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
     foreach ( array ( "2", "3", "4") as $i ) {
       $calendar [ $row [ "mon"] ][ $row ["day"] ] [ "$i" ]  = $row [ "ct$i" ] ;
     }
@@ -284,20 +279,15 @@ function printCalendarReport ( $player ) {
     }
     echo "</tbody></table></div>" ;
   }
+  $mysqli->close();
 }
 
 function printCollectionReport ( $player, $mode="lines" ) {
   require ( dirname ( __FILE__ ) . "/../config/db.php");
 
-  //create connection obj
-  $connection = mysql_connect($db_host, $db_username, $db_password);
-  if(!$connection){
-    die ("Could not connect to the database: <br />". mysql_error());
-  }
-  $db_select = mysql_select_db($db_database, $connection);
-  if (!$db_select){
-    die ("Could not select the database: <br />". mysql_error());
-  }
+  $mysqli = mysqli_init();
+  $mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+  $mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
   $sql = "
 SELECT a.$mode,
@@ -325,7 +315,7 @@ FROM   (SELECT p.$mode,
 GROUP  BY a.$mode
     " ;
 
-  $result = mysql_query($sql, $connection) or die(mysql_error());
+  $result = $mysqli->query($sql);
 
   $organized = organizeData ( $result, $mode ) ;
   $filled = fillBlanks ( $organized ) ;
@@ -375,6 +365,8 @@ GROUP  BY a.$mode
     $table .= $tableFoot ;
     echo $table ;
   }
+
+  $mysqli->close();
 }
 
 include_once( dirname ( __FILE__ ) . "/../templates/footer.php");
