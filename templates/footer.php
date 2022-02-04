@@ -34,4 +34,4 @@ Reports:
   </table>
 </td>
 </tr>
-<tr><td align="center" colspan="2">Copyright 2007 <a href="https://tomhummel.com">Tom Hummel</a></td></tr></table>
+<tr><td align="center" colspan="2">Copyright 2007, 2022 <a href="https://tomhummel.com">Tom Hummel</a></td></tr></table>
