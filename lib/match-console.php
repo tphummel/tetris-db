@@ -15,15 +15,9 @@ class MatchConsole {
     require_once ( __DIR__ . "/../templates/header.php" ) ;
     require ( __DIR__ . "/../config/db.php" ) ;
 
-    $connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
-    if ( !$connection ) {
-      die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
-    }
-
-    $db_select = mysql_select_db ( $db_database, $connection );
-    if ( !$db_select ) {
-      die ( "Could not select the database: <br />". mysql_error ( ) );
-    }
+    $mysqli = mysqli_init();
+    $mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+    $mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
     $errCssClass =  ' class="errorLocation"' ;
 
@@ -52,7 +46,7 @@ class MatchConsole {
                   SELECT locationname
                   FROM   location
                 ";
-                $resultLoc = mysql_query($queryLoc, $connection) or die(mysql_error());
+                $resultLoc = $mysqli->query($queryLoc);
 
                 if (!empty($location)) {
                   $selectedLocName = $location ;
@@ -65,13 +59,13 @@ class MatchConsole {
                          AND tm.matchid = (SELECT MAX(matchid)
                                            FROM   tntmatch)
                   ";
-                  $lastLocResult = mysql_query($queryLastLocation, $connection) or die(mysql_error());
-                  $lastLoc = mysql_fetch_array($lastLocResult);
+                  $lastLocResult = $mysqli->query($queryLastLocation);
+                  $lastLoc = $lastLocResult->fetch_array();
                   $selectedLocName = $lastLoc[ "locationname" ];
                 }
 
 
-                while ($loc = mysql_fetch_array($resultLoc)) {
+                while ($loc = $resultLoc->fetch_array()) {
                   $locName = $loc [ "locationname" ] ;
                   ?>
                   <option value="<?=$locName?>" <?=($selectedLocName === $locName ? "selected" : "")?>><?= $locName ?></option>
@@ -91,9 +85,9 @@ class MatchConsole {
         SELECT username
         FROM   player
       ";
-      $result = mysql_query($query, $connection) or die(mysql_error());
+      $result = $mysqli->query($query);
       //query DB once for name list and then put in array
-      while ($row = mysql_fetch_array($result)) {
+      while ($row = $result->fetch_array()) {
         $names[] = $row['username'];
       }
 
@@ -401,8 +395,8 @@ class MatchConsole {
             and p.username = '" . $playerName . "'
           ) a" ;
 
-        $result = mysql_query($query, $connection) or die(mysql_error());
-        $data = mysql_fetch_array($result);
+        $result = $mysqli->query($query);
+        $data = $result->fetch_array();
 
         $exp = $data["exp"];
         $games = $data["games"];
