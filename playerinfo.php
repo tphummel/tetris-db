@@ -50,6 +50,7 @@ GROUP BY m.matchdate
 ORDER BY m.matchdate DESC";
 
 $result2 = $mysqli->query($select2);
+$mysqli->close();
 
 while($row = $result2->fetch_array())
 {

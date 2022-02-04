@@ -396,6 +396,7 @@ class MatchConsole {
           ) a" ;
 
         $result = $mysqli->query($query);
+        $mysqli->close();
         $data = $result->fetch_array();
 
         $exp = $data["exp"];

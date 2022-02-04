@@ -136,6 +136,7 @@ class Helper {
     $insertPM_trimmed = rtrim($insertPM, ", ");
 
     $mysqli->query($insertPM_trimmed);
+    $mysqli->close();
 
     $match["id"] = $matchId ;
     $match["ts"] = $nowStamp ;
