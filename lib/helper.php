@@ -109,15 +109,9 @@ class Helper {
   public static function saveMatch ( $match ) {
     require ( __DIR__ . "/../config/db.php" ) ;
 
-    $connection = mysql_connect ( $db_host, $db_username, $db_password ) ;
-    if ( !$connection ) {
-      die ( "Could not connect to the database: <br />" . mysql_error ( ) ) ;
-    }
-
-    $db_select = mysql_select_db ( $db_database, $connection );
-    if ( !$db_select ) {
-      die ( "Could not select the database: <br />". mysql_error ( ) );
-    }
+    $mysqli = mysqli_init();
+    $mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+    $mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
     $nowdate = date ( "Y-m-d" ) ;
     $nowstamp = date ( "Y-m-d H:i:s" ) ;
@@ -128,10 +122,10 @@ class Helper {
         (SELECT locationid from location where locationname = '" . $match["location"] . "'),
       '" . $match["note"] . "', 1)" ;
 
-    mysql_query ( $insertTM, $connection ) or die ( "error with tnt match insert: ". mysql_error() ) ;
+    $mysqli->query($insertTM);
 
     //Create PlayerMatch Records
-    $matchId = mysql_insert_id ( ) ;
+    $matchId = $mysqli->insert_id ;
 
     $insertPM = "INSERT INTO playermatch VALUES ";
     foreach ( $match["players"] as $player ) {
@@ -141,7 +135,7 @@ class Helper {
     }
     $insertPM_trimmed = rtrim($insertPM, ", ");
 
-    mysql_query($insertPM_trimmed, $connection) or die("error with playermatch insert: " . mysql_error());
+    $mysqli->query($insertPM_trimmed);
 
     $match["id"] = $matchId ;
     $match["ts"] = $nowStamp ;
