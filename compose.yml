@@ -9,7 +9,7 @@ services:
       - "8080:80"
     environment:
       - MYSQL_HOST=db
-      - MYSQL_DATABASE=sample
+      - MYSQL_DATABASE=tetrisdb
       - MYSQL_USERNAME=root
       - MYSQL_PASSWORD=secret
       - REDIS_HOST=redis
@@ -23,7 +23,7 @@ services:
     image: mariadb:latest
     environment:
       MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: sample
+      MYSQL_DATABASE: tetrisdb
     volumes:
       - db_data:/var/lib/mysql
     networks:
