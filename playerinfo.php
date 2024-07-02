@@ -5,7 +5,7 @@ include_once "templates/header.php" ;
 require_once("config/db.php");
 
 $mysqli = mysqli_init();
-$mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+// $mysqli->ssl_set(NULL, NULL, NULL, NULL, NULL);
 $mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
 if (isset($_GET["playerid"])){

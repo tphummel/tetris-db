@@ -5,7 +5,7 @@ class DB {
     require dirname ( __FILE__ ) . "/../../config/db.php" ;
 
     $mysqli = mysqli_init();
-    $mysqli->ssl_set(NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+    // $mysqli->ssl_set(NULL, NULL, NULL, NULL, NULL);
     $mysqli->real_connect($db_host, $db_username, $db_password, $db_database);
 
     return $mysqli ;
