@@ -1,0 +1,37 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}/tetris-db:latest
+          ghcr.io/${{ github.repository }}/tetris-db:${{ github.sha }}
+          ghcr.io/${{ github.repository }}/tetris-db:${{ github.ref }}
