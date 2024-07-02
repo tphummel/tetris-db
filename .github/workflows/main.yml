@@ -32,6 +32,5 @@ jobs:
         context: .
         push: true
         tags: |
-          ghcr.io/${{ github.repository }}/tetris-db:latest
-          ghcr.io/${{ github.repository }}/tetris-db:${{ github.sha }}
-          ghcr.io/${{ github.repository }}/tetris-db:${{ github.ref }}
+          ghcr.io/${{ github.repository }}:latest
+          ghcr.io/${{ github.repository }}:${{ github.sha }}
