@@ -3,7 +3,8 @@ require_once dirname ( __FILE__ ) . "/../vendor/redisent-master/src/redisent/Red
 
 class Redis {
   public static function getConn ( ) {
-    $redis = new redisent\Redis ( 'redis://localhost' ) ;
+    $redisHost = getenv("REDIS_HOST") ? getenv("REDIS_HOST") : 'localhost';
+    $redis = new redisent\Redis ( 'redis://' . $redisHost ) ;
     return $redis ;
   }
 
